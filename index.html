@@ -13,6 +13,7 @@
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             overflow-x: hidden;
+            color: #4a5568;
         }
 
         .title-font {
@@ -25,9 +26,8 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Floating background items */
         .floating-item {
-            position: absolute;
+            position: fixed;
             opacity: 0.6;
             animation: floatup 10s linear infinite;
             pointer-events: none;
@@ -41,10 +41,9 @@
             100% { transform: translateY(-20vh) rotate(360deg) scale(1.2); opacity: 0; }
         }
 
-        /* Card styles and pop animations */
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
             border: 4px solid #ffb6c1;
             box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.8);
         }
@@ -58,14 +57,13 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Option buttons styling */
-        .option-btn {
+        .option-btn, .level-btn {
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
         
-        .option-btn:hover {
+        .option-btn:hover, .level-btn:hover {
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 7px 15px rgba(255, 105, 180, 0.3);
             border-color: #ff69b4;
@@ -73,265 +71,499 @@
             background-color: #fff0f5;
         }
 
-        .option-btn:active {
+        .option-btn:active, .level-btn:active {
             transform: translateY(1px);
         }
 
-        /* Custom Modal for feedback */
-        #feedback-modal {
-            transition: opacity 0.3s ease;
-        }
-        .modal-content {
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
         .hidden { display: none !important; }
+        
+        .speech-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .speech-btn:hover {
+            transform: scale(1.1);
+        }
+        .speech-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom Scrollbar for Study Guide */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fdf2f8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f9a8d4; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center relative p-4 text-gray-800">
+<body class="min-h-screen flex items-center justify-center relative p-4">
 
-    <!-- Decorative background elements -->
     <div class="floating-item text-4xl" style="left: 10%; animation-duration: 12s; animation-delay: 0s;">🌸</div>
     <div class="floating-item text-3xl" style="left: 25%; animation-duration: 15s; animation-delay: 2s;">✨</div>
     <div class="floating-item text-5xl" style="left: 40%; animation-duration: 11s; animation-delay: 4s;">🎀</div>
     <div class="floating-item text-4xl" style="left: 60%; animation-duration: 14s; animation-delay: 1s;">💖</div>
     <div class="floating-item text-2xl" style="left: 75%; animation-duration: 10s; animation-delay: 3s;">👑</div>
-    <div class="floating-item text-4xl" style="left: 85%; animation-duration: 13s; animation-delay: 5s;">💅</div>
+    <div class="floating-item text-4xl" style="left: 85%; animation-duration: 13s; animation-delay: 5s;">🧬</div>
 
     <!-- Main App Container -->
-    <main class="glass-card rounded-3xl p-6 md:p-10 max-w-xl w-full z-10 relative">
+    <main class="glass-card rounded-3xl p-6 md:p-10 max-w-2xl w-full z-10 relative max-h-[90vh] flex flex-col">
         
         <!-- Screen 1: Start Menu -->
-        <div id="start-screen" class="text-center pop-in">
+        <div id="start-screen" class="text-center pop-in overflow-y-auto">
             <h1 class="title-font text-5xl md:text-6xl text-pink-500 mb-2 drop-shadow-md">Glam Bio Quest</h1>
             <p class="text-lg text-purple-600 font-semibold mb-6">Slay your Edexcel Biology Revision! ✨</p>
             
             <div class="bg-pink-50 rounded-2xl p-4 mb-8 border border-pink-200 shadow-inner">
                 <p class="text-gray-700 text-sm md:text-base leading-relaxed">
-                    Welcome to the academy, gorgeous! 💖 Get ready to test your knowledge on the classification of living organisms, cells, and everything biology. <br><br>
-                    <strong>Mission:</strong> Answer correctly, collect stars, and prove you're both brainy and beautiful!
+                    Welcome to the academy, gorgeous! 💖 Master your Edexcel classification and cell structures. Review the study guide, then test your knowledge across 5 fabulous levels!
                 </p>
             </div>
             
-            <button onclick="startGame()" class="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-xl py-3 px-10 rounded-full shadow-lg hover:shadow-xl hover:from-pink-500 hover:to-purple-500 transition-all duration-300 transform hover:-translate-y-1">
-                Let's Glow! 🚀
+            <div class="flex flex-col gap-4 max-w-sm mx-auto">
+                <button onclick="showScreen('study-screen')" class="bg-gradient-to-r from-teal-400 to-blue-400 text-white font-bold text-xl py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:from-teal-500 hover:to-blue-500 transition-all duration-300 transform hover:-translate-y-1">
+                    Study Guide 📚🎀
+                </button>
+                <button onclick="showScreen('level-screen')" class="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-xl py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:from-pink-500 hover:to-purple-500 transition-all duration-300 transform hover:-translate-y-1">
+                    Quiz Levels 🚀✨
+                </button>
+            </div>
+        </div>
+
+        <!-- Screen 2: Study Guide -->
+        <div id="study-screen" class="hidden flex flex-col h-full pop-in">
+            <h2 class="title-font text-4xl text-teal-500 text-center mb-4">Study Guide 📖✨</h2>
+            
+            <div class="overflow-y-auto flex-grow pr-2 space-y-4 mb-4">
+                
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                    <h3 class="font-bold text-lg text-blue-700 mb-2">🎀 MRS GREN (Characteristics of Life)</h3>
+                    <ul class="text-sm list-disc pl-5 space-y-2">
+                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Movement:</strong> Action causing change of position.</li>
+                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Respiration:</strong> Chemical reactions breaking down nutrients to release <em>energy</em>.</li>
+                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Sensitivity:</strong> Detecting internal/external <em>stimuli</em> & responding.</li>
+                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Growth:</strong> Permanent increase in size/dry mass.</li>
+                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Reproduction:</strong> Producing new offspring (preserving species).</li>
+                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Excretion:</strong> Removal of metabolic waste & excess substances.</li>
+                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Nutrition:</strong> Taking in materials for energy & development.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                    <h3 class="font-bold text-lg text-purple-700 mb-2">👑 Classification & Naming</h3>
+                    <p class="text-sm mb-2"><strong>Taxa Order:</strong> <span class="text-purple-600 font-semibold">Kingdom ➔ Phylum ➔ Class ➔ Order ➔ Family ➔ Genus ➔ Species</span></p>
+                    <p class="text-sm mb-1"><strong>Species:</strong> Group that can reproduce <span class="bg-yellow-200 px-1 rounded">fertile offspring</span>.</p>
+                    <p class="text-sm"><strong>Binomial System:</strong> <span class="text-red-500">Genus (Capitalized)</span> + <span class="text-blue-500">species (lowercase)</span>. e.g., <em>Homo sapiens</em>.</p>
+                </div>
+                
+                 <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+                    <h3 class="font-bold text-lg text-green-700 mb-2">🔬 Animal vs Plant Cells (Key Differences)</h3>
+                    <div class="grid grid-cols-2 gap-2 text-sm text-center">
+                         <div class="font-bold bg-green-200 rounded p-1">Animal Cell 🐾</div>
+                         <div class="font-bold bg-green-200 rounded p-1">Plant Cell 🌿</div>
+                         
+                         <div class="bg-white p-1 rounded border">No Cell Wall</div>
+                         <div class="bg-white p-1 rounded border font-semibold text-green-700">Cellulose Cell Wall</div>
+                         
+                         <div class="bg-white p-1 rounded border">No Chloroplasts</div>
+                         <div class="bg-white p-1 rounded border font-semibold text-green-700">Has Chloroplasts</div>
+                         
+                         <div class="bg-white p-1 rounded border">Small/No Vacuole</div>
+                         <div class="bg-white p-1 rounded border font-semibold text-green-700">Large Sap Vacuole</div>
+                         
+                         <div class="bg-white p-1 rounded border">Stores Carbohydrates as <span class="font-bold text-blue-600">Glycogen</span></div>
+                         <div class="bg-white p-1 rounded border">Stores Carbohydrates as <span class="font-bold text-blue-600">Starch</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
+                    <h3 class="font-bold text-lg text-indigo-700 mb-2">⚙️ Cell Organelles</h3>
+                    <ul class="text-sm space-y-1">
+                        <li><strong>Nucleus:</strong> Controls activities; contains chromosomes (DNA).</li>
+                        <li><strong>Cytoplasm:</strong> Site of metabolic chemical reactions.</li>
+                        <li><strong>Cell Membrane:</strong> Selectively permeable; controls entry/exit.</li>
+                        <li><strong>Mitochondria:</strong> Site of <span class="bg-yellow-200 px-1 rounded">aerobic respiration</span> (energy release).</li>
+                        <li><strong>Ribosomes:</strong> Site of <span class="bg-pink-200 px-1 rounded">protein synthesis</span>.</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-pink-50 p-4 rounded-xl border border-pink-200">
+                    <h3 class="font-bold text-lg text-pink-700 mb-2">🐾 Vertebrates Comparison</h3>
+                    <ul class="text-sm space-y-2">
+                        <li><strong>Fish 🐟:</strong> Scales, gills, streamline shape, fins.</li>
+                        <li><strong>Amphibians 🐸:</strong> <span class="font-semibold text-pink-600">Moist skin</span>, jelly eggs in water. Tadpoles (gills) ➔ Adults (lungs).</li>
+                        <li><strong>Reptiles 🦎:</strong> <span class="font-semibold text-pink-600">Dry scaly skin</span>, waterproof eggs.</li>
+                        <li><strong>Birds 🦅:</strong> <span class="font-semibold text-pink-600">Feathers</span>, wings, hard eggs, beaks.</li>
+                        <li><strong>Mammals 🐄:</strong> <span class="font-semibold text-pink-600">Hair/fur</span>, <span class="font-semibold text-blue-600">Mammary glands (milk)</span>, external ear pinna, different teeth.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
+                    <h3 class="font-bold text-lg text-yellow-700 mb-2">🦋 Arthropods Comparison</h3>
+                    <p class="text-sm italic mb-2 text-center text-gray-600">All share: Segmented bodies, Jointed legs, Exoskeleton</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left border-collapse bg-white rounded-lg overflow-hidden">
+                            <thead class="bg-yellow-100 text-yellow-800">
+                                <tr>
+                                    <th class="p-2 border">Class</th>
+                                    <th class="p-2 border">Body Parts</th>
+                                    <th class="p-2 border">Legs</th>
+                                    <th class="p-2 border">Key Feature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="p-2 border font-bold">Insects 🐝</td>
+                                    <td class="p-2 border">3 (Head, Thorax, Abdomen)</td>
+                                    <td class="p-2 border">3 pairs</td>
+                                    <td class="p-2 border">1-2 pairs wings, 1 pair antenna</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border font-bold">Arachnids 🕷️</td>
+                                    <td class="p-2 border">2 (Cephalothorax, Abdomen)</td>
+                                    <td class="p-2 border">4 pairs</td>
+                                    <td class="p-2 border">Simple eyes, no antenna, chelicerae</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border font-bold">Crustaceans 🦀</td>
+                                    <td class="p-2 border">2 (Cephalothorax, Abdomen)</td>
+                                    <td class="p-2 border">&gt;4 pairs</td>
+                                    <td class="p-2 border">Gills, 2 pairs antenna</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border font-bold">Myriapods 🐛</td>
+                                    <td class="p-2 border">Head + many identical segments</td>
+                                    <td class="p-2 border">Many</td>
+                                    <td class="p-2 border">1 pair antenna</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <button onclick="showScreen('start-screen')" class="mt-auto bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-full hover:bg-gray-300 transition-colors w-full md:w-1/2 mx-auto shadow-sm">
+                Back to Menu 🎀
             </button>
         </div>
 
-        <!-- Screen 2: Game Area -->
-        <div id="game-screen" class="hidden">
-            <!-- Header & Progress -->
+        <!-- Screen 3: Level Select -->
+        <div id="level-screen" class="hidden text-center pop-in overflow-y-auto">
+            <h2 class="title-font text-4xl text-purple-500 mb-6">Choose Your Mission 🚀</h2>
+            
+            <div class="grid grid-cols-1 gap-4 max-w-md mx-auto mb-8">
+                <button onclick="startModule(0)" class="level-btn bg-white border-2 border-pink-300 rounded-2xl p-4 text-left shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-lg text-pink-600">Level 1: The Basics</div>
+                        <div class="text-sm text-gray-500">MRS GREN & Naming</div>
+                    </div>
+                    <div class="text-2xl">🌱</div>
+                </button>
+                <button onclick="startModule(1)" class="level-btn bg-white border-2 border-purple-300 rounded-2xl p-4 text-left shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-lg text-purple-600">Level 2: Bone Squad</div>
+                        <div class="text-sm text-gray-500">Vertebrate Classes</div>
+                    </div>
+                    <div class="text-2xl">🐾</div>
+                </button>
+                <button onclick="startModule(2)" class="level-btn bg-white border-2 border-teal-300 rounded-2xl p-4 text-left shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-lg text-teal-600">Level 3: Bugging Out</div>
+                        <div class="text-sm text-gray-500">Awesome Arthropods</div>
+                    </div>
+                    <div class="text-2xl">🦋</div>
+                </button>
+                <button onclick="startModule(3)" class="level-btn bg-white border-2 border-blue-300 rounded-2xl p-4 text-left shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-lg text-blue-600">Level 4: Tiny Power</div>
+                        <div class="text-sm text-gray-500">Cell Structure & Organelles</div>
+                    </div>
+                    <div class="text-2xl">🔬</div>
+                </button>
+                <button onclick="startModule(4)" class="level-btn bg-white border-2 border-yellow-300 rounded-2xl p-4 text-left shadow-sm flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-lg text-yellow-600">Level 5: Plant vs Animal</div>
+                        <div class="text-sm text-gray-500">Cell Differences</div>
+                    </div>
+                    <div class="text-2xl">🌿</div>
+                </button>
+            </div>
+
+            <button onclick="showScreen('start-screen')" class="bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-full hover:bg-gray-300 transition-colors shadow-sm">
+                Back to Menu
+            </button>
+        </div>
+
+        <!-- Screen 4: Game Area -->
+        <div id="game-screen" class="hidden flex flex-col h-full">
             <div class="flex justify-between items-center mb-4">
                 <div class="text-pink-500 font-bold text-lg">Score: <span id="score-display">0</span> ✨</div>
                 <div class="text-purple-500 font-bold">Q <span id="question-number">1</span>/10</div>
             </div>
             
-            <!-- Progress Bar -->
-            <div class="w-full bg-gray-200 rounded-full h-3 mb-8 shadow-inner">
+            <div class="w-full bg-gray-200 rounded-full h-3 mb-6 shadow-inner">
                 <div id="progress-bar" class="bg-gradient-to-r from-pink-400 to-purple-400 h-3 rounded-full transition-all duration-500" style="width: 10%"></div>
             </div>
 
-            <!-- Question -->
-            <h2 id="question-text" class="text-xl md:text-2xl font-bold text-gray-800 text-center mb-8 min-h-[80px] flex items-center justify-center">
-                Question goes here?
-            </h2>
+            <div class="flex items-center justify-center gap-3 mb-8 min-h-[100px]">
+                <h2 id="question-text" class="text-xl md:text-2xl font-bold text-gray-800 text-center flex-1">
+                    Question goes here?
+                </h2>
+                <button onclick="speakQuestion()" class="speech-btn bg-pink-100 p-3 rounded-full shadow hover:bg-pink-200 flex-shrink-0" title="Read Question">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d13682" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                </button>
+            </div>
 
-            <!-- Options Grid -->
-            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <!-- Buttons injected via JS -->
+            </div>
+            
+            <div class="mt-auto flex justify-center">
+                 <button onclick="showScreen('level-screen')" class="text-sm text-gray-400 hover:text-gray-600 underline">Quit Level</button>
             </div>
         </div>
 
-        <!-- Screen 3: End Screen -->
-        <div id="end-screen" class="hidden text-center">
-            <h1 class="title-font text-5xl text-pink-500 mb-4">You did it, Queen! 👑</h1>
-            <p class="text-xl text-gray-700 mb-2">Your Final Glam Score:</p>
+        <!-- Screen 5: End Screen -->
+        <div id="end-screen" class="hidden text-center pop-in">
+            <h1 class="title-font text-5xl text-pink-500 mb-4">Level Complete, Queen! 👑</h1>
+            <p class="text-xl text-gray-700 mb-2">Your Level Score:</p>
             <div class="text-6xl font-bold text-purple-600 mb-6 drop-shadow-lg"><span id="final-score">0</span>/10</div>
             
             <div id="feedback-message" class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 mb-8 text-lg font-semibold text-purple-800">
                 Feedback message here!
             </div>
             
-            <button onclick="resetGame()" class="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-lg py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:from-pink-500 hover:to-purple-500 transition-all duration-300">
-                Play Again & Slay Harder! 💅
-            </button>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="showScreen('level-screen')" class="bg-gray-200 text-gray-800 font-bold text-lg py-3 px-8 rounded-full shadow-md hover:bg-gray-300 transition-all duration-300">
+                    More Levels 🚀
+                </button>
+                <button onclick="restartCurrentModule()" class="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-lg py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:from-pink-500 hover:to-purple-500 transition-all duration-300">
+                    Replay Level 💅
+                </button>
+            </div>
         </div>
     </main>
 
-    <!-- Custom Feedback Modal (replaces alert) -->
-    <div id="feedback-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 pointer-events-none">
-        <div id="modal-content-box" class="bg-white border-4 border-pink-300 rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl transform scale-90 modal-content">
+    <!-- Custom Feedback Modal -->
+    <div id="feedback-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="modal-content-box" class="bg-white border-4 border-pink-300 rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl transform scale-90 transition-transform duration-300 cubic-bezier(0.175, 0.885, 0.32, 1.275)">
             <div id="modal-icon" class="text-6xl mb-4">✨</div>
             <h3 id="modal-title" class="title-font text-3xl text-pink-500 mb-2">Title</h3>
             <p id="modal-text" class="text-gray-700 mb-6 font-semibold">Message goes here.</p>
-            <button onclick="closeModalAndNext()" class="bg-pink-400 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-500 transition-colors w-full">
+            <button onclick="closeModalAndNext()" class="bg-pink-400 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-500 transition-colors w-full shadow-md">
                 Continue 🎀
             </button>
         </div>
     </div>
 
     <script>
-        // Game State
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let questions = [];
-
-        // Question Bank (Strictly aligned with provided Edexcel PDF)
-        const questionBank = [
-            {
-                q: "What does the 'S' in the MRS GREN characteristics stand for? 🌸",
-                options: ["Sleep", "Sensitivity", "Singing", "Synthesis"],
-                a: 1,
-                explanation: "Sensitivity (or Irritability) is the ability to detect or sense stimuli! 💅"
-            },
-            {
-                q: "In the universal binomial system, how should we correctly write the scientific name for humans? ✍️",
-                options: ["homo sapiens", "Homo Sapiens", "Homo sapiens", "HOMO SAPIENS"],
-                a: 2,
-                explanation: "The Genus is capitalized (Homo) and the species is small (sapiens). Slay that Latin! ✨"
-            },
-            {
-                q: "Which of the following is absolutely NOT considered a living organism? 🚫",
-                options: ["Bacteria", "Fungi", "Viruses", "Protista"],
-                a: 2,
-                explanation: "Viruses are not considered living organisms. They can't sit with us! 🙅‍♀️"
-            },
-            {
-                q: "I have dry scaly skin to reduce water loss, and I lay eggs with waterproof shells. What am I? 🦎",
-                options: ["Amphibian", "Reptile", "Bird", "Mammal"],
-                a: 1,
-                explanation: "Reptiles have dry scaly skin! Amphibians have moist skin. Keep glowing! ✨"
-            },
-            {
-                q: "How many pairs of jointed legs does a glamorous Arachnid (like a spider) have? 🕷️",
-                options: ["3 pairs", "4 pairs", "5 pairs", "Many pairs"],
-                a: 1,
-                explanation: "Arachnids have 4 pairs of jointed legs originating from the cephalothorax! 👠"
-            },
-            {
-                q: "Which of these is a fabulous feature ONLY found in Plant Cells? 🌿",
-                options: ["Nucleus", "Cytoplasm", "Cell Membrane", "Cellulose Cell Wall"],
-                a: 3,
-                explanation: "Plant cells wear a rigid cellulose cell wall for protection and support! Animal cells don't. 🧱"
-            },
-            {
-                q: "Where does aerobic respiration and energy release happen in the cell? (The powerhouse!) ⚡",
-                options: ["Mitochondria", "Ribosomes", "Chloroplasts", "Sap Vacuole"],
-                a: 0,
-                explanation: "Mitochondria are the site of energy release! Ribosomes are for making protein. 💖"
-            },
-            {
-                q: "Look at class Insects! How is their fabulous segmented body divided? 🦋",
-                options: ["Cephalothorax and Abdomen", "Head, Thorax, and Abdomen", "Head and Trunk", "Just Abdomen"],
-                a: 1,
-                explanation: "Insects have 3 regions: Head, Thorax, and Abdomen to facilitate movement! 💃"
-            },
-            {
-                q: "What do Mammals have that secrete milk for their cute babies? 🍼",
-                options: ["External ear pinna", "Whiskers", "Mammary glands", "Different types of teeth"],
-                a: 2,
-                explanation: "Mammary glands secrete milk for mammalian offspring. So maternal! 🎀"
-            },
-            {
-                q: "Which characteristic of life (MRS GREN) is 'the permanent increase in size or dry mass'? 🌱",
-                options: ["Nutrition", "Reproduction", "Excretion", "Growth"],
-                a: 3,
-                explanation: "Growth is the permanent increase in size or dry mass! Keep growing, queen! 👑"
-            }
+        // Data Banks (5 Modules, 10 Questions Each - Aligned with Edexcel Notes)
+        const modules = [
+            // Module 0: MRS GREN & Naming
+            [
+                { q: "What does the 'S' in MRS GREN stand for? 🌸", options: ["Sleep", "Sensitivity", "Singing", "Synthesis"], a: 1, explanation: "Sensitivity is the ability to detect or sense stimuli! 💅" },
+                { q: "Which process means 'the removal of waste products of metabolism'? 🗑️", options: ["Nutrition", "Excretion", "Respiration", "Movement"], a: 1, explanation: "Excretion removes the metabolic waste. Take out the trash! ✨" },
+                { q: "Which group is completely EXCLUDED from being living organisms? 🚫", options: ["Bacteria", "Fungi", "Viruses", "Protista"], a: 2, explanation: "Viruses aren't considered living organisms! They can't sit with us! 🙅‍♀️" },
+                { q: "How should a scientific binomial name be written properly? ✍️", options: ["homo sapiens", "Homo Sapiens", "Homo sapiens", "HOMO SAPIENS"], a: 2, explanation: "Capital Genus, lowercase species! (Homo sapiens) Slay that Latin! 💖" },
+                { q: "What does 'Respiration' actually do in living cells? ⚡", options: ["Breathing air in and out", "Chemical reactions releasing energy", "Making food from sunlight", "Permanent increase in size"], a: 1, explanation: "Respiration is the chemical reaction that breaks down nutrients to release energy! 🔥" },
+                { q: "A group of living organisms that can reproduce and give FERTILE offspring is a... 👶", options: ["Kingdom", "Genus", "Phylum", "Species"], a: 3, explanation: "That's the exact definition of a Species! 👑" },
+                { q: "What is 'the permanent increase in size or dry mass'? 🌱", options: ["Growth", "Nutrition", "Reproduction", "Movement"], a: 0, explanation: "Growth! Keep growing, gorgeous! 📈" },
+                { q: "Which taxonomic rank comes directly AFTER Kingdom? 👑", options: ["Class", "Genus", "Phylum", "Order"], a: 2, explanation: "King Philip Came Over... Kingdom, then Phylum! 🧠" },
+                { q: "Which characteristic means taking in materials for energy, growth, and development? 🥗", options: ["Respiration", "Sensitivity", "Excretion", "Nutrition"], a: 3, explanation: "Nutrition is how organisms get their fuel! 🍓" },
+                { q: "How many MAJOR groups (Kingdoms) of living organisms did we study? 🖐️", options: ["3", "4", "5", "6"], a: 2, explanation: "5 Kingdoms: Animals, Plants, Fungi, Bacteria, and Protista! ✨" }
+            ],
+            // Module 1: Vertebrates
+            [
+                { q: "Which animal group has dry scaly skin to reduce water loss? 🦎", options: ["Amphibian", "Reptile", "Bird", "Mammal"], a: 1, explanation: "Reptiles have dry scaly skin! Amphibians have moist skin. ✨" },
+                { q: "What special feature do Mammals have to feed their babies? 🍼", options: ["External ear pinna", "Whiskers", "Mammary glands", "Different types of teeth"], a: 2, explanation: "Mammary glands secrete milk for mammalian offspring. So maternal! 🎀" },
+                { q: "Which vertebrate group has a streamline shape, gills, and scales? 🐟", options: ["Fish", "Amphibians", "Reptiles", "Crustaceans"], a: 0, explanation: "Fish! Perfectly adapted for swimming and breathing in water! 🌊" },
+                { q: "How do adult Amphibians (like frogs) primarily breathe on land? 🐸", options: ["Gills", "Lungs", "Through scales", "Trachea"], a: 1, explanation: "Adults use lungs, while tadpoles use external gills in water! 💧" },
+                { q: "What covers a Bird's body to act as an insulating layer? 🪶", options: ["Hair", "Fur", "Feathers", "Dry scales"], a: 2, explanation: "Feathers! They insulate, decrease density, and are coated in waterproof oil! 🕊️" },
+                { q: "Which of these groups lays soft eggs in a jelly-like coat in water? 🥚", options: ["Reptiles", "Birds", "Amphibians", "Fish"], a: 2, explanation: "Amphibians lay soft, jelly-like eggs in water that hatch into tadpoles! 🐸" },
+                { q: "Which feature is unique to Mammals (alongside fur/hair)? 👂", options: ["Wings", "External ear pinna", "Lungs", "Four limbs"], a: 1, explanation: "The external ear pinna is a classic mammalian trait! 🐾" },
+                { q: "What type of eggs do Birds lay? 🪺", options: ["Soft jelly eggs", "Leathery waterproof eggs", "Hard shelled eggs", "They don't lay eggs"], a: 2, explanation: "Birds lay eggs with hard shells for protection! 🦅" },
+                { q: "Which vertebrates have bodies divided into head, neck, trunk, and tail? 🐊", options: ["Insects", "Reptiles", "Fish", "Amphibians"], a: 1, explanation: "Reptiles typically have these body divisions! 🐍" },
+                { q: "Animals store carbohydrates in their liver and muscle cells in the form of... 🥩", options: ["Starch", "Cellulose", "Glycogen", "Glucose"], a: 2, explanation: "Animals store energy as Glycogen! (Plants use starch). ⚡" }
+            ],
+            // Module 2: Invertebrates (Arthropods)
+            [
+                { q: "All Arthropods share segmented bodies, jointed legs, and... what else? 🛡️", options: ["Feathers", "Exoskeleton", "Internal bones", "Gills"], a: 1, explanation: "An exoskeleton! It gives them protection and support on the outside! 🪲" },
+                { q: "How is an Insect's body divided? 🦋", options: ["Cephalothorax & Abdomen", "Head, Thorax, & Abdomen", "Head & Trunk", "Just Abdomen"], a: 1, explanation: "Insects have 3 regions: Head, Thorax, and Abdomen! 💃" },
+                { q: "How many pairs of jointed legs does an Arachnid (like a spider) have? 🕷️", options: ["3 pairs", "4 pairs", "5 pairs", "Many pairs"], a: 1, explanation: "Arachnids have 4 pairs (8 legs total) originating from the cephalothorax! 👠" },
+                { q: "Which group of Arthropods has gills and often a calcium-strengthened exoskeleton? 🦀", options: ["Insects", "Arachnids", "Crustaceans", "Myriapods"], a: 2, explanation: "Crustaceans! Like crabs and lobsters, adapted for water! 🌊" },
+                { q: "How many pairs of wings do insects typically have attached to their thorax? 🪽", options: ["None", "One or two pairs", "Three pairs", "Four pairs"], a: 1, explanation: "Insects usually have 1 or 2 pairs of wings for flying! ✈️" },
+                { q: "Which Arthropod class has a body divided into a head and identical abdominal segments? 🐛", options: ["Insects", "Crustaceans", "Myriapods", "Arachnids"], a: 2, explanation: "Myriapods (like centipedes) have a head and many identical segments! 📏" },
+                { q: "Insects have compound eyes. What do Arachnids have? 👁️", options: ["Compound eyes too", "No eyes", "Simple eyes", "Stalked eyes"], a: 2, explanation: "Arachnids have simple eyes, unlike the compound eyes of insects! 🕷️" },
+                { q: "Which structures do spiders use to hold their prey instead of antennae? 🕸️", options: ["Chelicerae", "Gills", "Thorax", "Stalks"], a: 0, explanation: "Spiders lack antennae but have chelicerae to hold prey! 🍽️" },
+                { q: "How many pairs of antennae do Crustaceans have? 🦐", options: ["Zero", "One pair", "Two pairs", "Three pairs"], a: 2, explanation: "Crustaceans rock TWO pairs of antennae for extra sensation! 📡" },
+                { q: "Where do the legs originate from on an Arachnid? 🕷️", options: ["Abdomen", "Thorax only", "Cephalothorax", "Head"], a: 2, explanation: "All 4 pairs of legs come from the fused cephalothorax! 🎀" }
+            ],
+            // Module 3: Cell Structure
+            [
+                { q: "What is the basic unit of life? 🔬", options: ["The organ", "The tissue", "The cell", "The organism"], a: 2, explanation: "The cell is the fabulous basic unit of all living things! ✨" },
+                { q: "Which organelle controls all cell activities and cell division? 🧠", options: ["Cytoplasm", "Nucleus", "Ribosome", "Mitochondria"], a: 1, explanation: "The Nucleus is the boss! It holds the DNA/chromosomes. 👑" },
+                { q: "Where do most of the chemical (metabolic) reactions take place in a cell? 🧪", options: ["Cell membrane", "Nucleus", "Cytoplasm", "Vacuole"], a: 2, explanation: "The Cytoplasm is the jelly-like substance where reactions happen! 🍮" },
+                { q: "Which structure controls what molecules pass in and out of the cell? 🚪", options: ["Cell wall", "Cell membrane", "Cytoplasm", "Nucleus"], a: 1, explanation: "The Cell Membrane is selectively permeable, acting like a VIP bouncer! 🕶️" },
+                { q: "Where is the site of aerobic respiration and energy release? ⚡", options: ["Mitochondria", "Ribosomes", "Chloroplasts", "Rough ER"], a: 0, explanation: "Mitochondria are the powerhouse of the cell, releasing energy! 🔥" },
+                { q: "What is the function of Ribosomes? 🥩", options: ["Energy release", "Storing water", "Photosynthesis", "Protein synthesis"], a: 3, explanation: "Ribosomes make proteins! (Protein synthesis). 💪" },
+                { q: "Thread-like structures carrying genetic codes inside the nucleus are called... 🧬", options: ["Enzymes", "Chromosomes", "Lipids", "Vacuoles"], a: 1, explanation: "Chromosomes are made of DNA and carry your genetic traits! 🎀" },
+                { q: "When ribosomes are attached to the endoplasmic reticulum, it's called... 🪢", options: ["Smooth ER", "Rough ER", "Bumpy ER", "Ribosomal ER"], a: 1, explanation: "It's called Rough Endoplasmic Reticulum because of the bumpy ribosomes! 💅" },
+                { q: "What is the cell membrane primarily made of? 🧱", options: ["Cellulose", "Proteins and Lipids", "Chitin", "Starch"], a: 1, explanation: "It is composed of proteins and lipids! 🧴" },
+                { q: "An organism formed of only one cell is called... 🦠", options: ["Multicellular", "Unicellular", "Non-cellular", "Acellular"], a: 1, explanation: "Unicellular organisms are single-celled independent queens! 👑" }
+            ],
+            // Module 4: Plant vs Animal Cells
+            [
+                { q: "Which feature is found in Plant Cells but NEVER in Animal Cells? 🌿", options: ["Nucleus", "Cytoplasm", "Cellulose Cell Wall", "Cell Membrane"], a: 2, explanation: "Plant cells wear a rigid cellulose cell wall for protection and support! 🧱" },
+                { q: "What do Chloroplasts contain that traps sunlight for photosynthesis? ☀️", options: ["Mitochondria", "Chlorophyll", "Starch", "Cell Sap"], a: 1, explanation: "Chlorophyll is the green pigment that traps sunlight! 💚" },
+                { q: "How do Plant Cells maintain their firm structure (turgor pressure)? 🎈", options: ["Glycogen storage", "Cell Wall preventing bursting", "Nervous coordination", "Small temporary vacuoles"], a: 1, explanation: "The rigid cell wall prevents the cell from bursting as it absorbs water! 💧" },
+                { q: "What do Plant Cells store their excess carbohydrates as? 🥔", options: ["Glycogen", "Glucose", "Starch", "Lipids"], a: 2, explanation: "Plants store energy as Starch granules! (Animals use Glycogen). 🌾" },
+                { q: "Describe the vacuole in a standard Plant Cell. 💧", options: ["Small and temporary", "Non-existent", "Large central sap vacuole", "Filled with glycogen"], a: 2, explanation: "Plants have a massive central sap vacuole to store sugar and water! 🎀" },
+                { q: "Unlike the selectively permeable cell membrane, the Plant Cell Wall is... 🚪", options: ["Impermeable", "Fully freely permeable", "Only permeable to water", "Made of lipids"], a: 1, explanation: "The cell wall is fully freely permeable, allowing all molecules to pass! 🌬️" },
+                { q: "Which organelles are present in BOTH Plant and Animal cells? 🤝", options: ["Chloroplasts", "Cell Wall", "Mitochondria", "Large Sap Vacuole"], a: 2, explanation: "Both need energy, so both have Mitochondria! ⚡" },
+                { q: "If you see a cell storing Glycogen and lacking a cell wall, what is it? 🐾", options: ["Plant Cell", "Animal Cell", "Bacterial Cell", "Fungal Cell"], a: 1, explanation: "No cell wall + glycogen = Animal Cell! 🦁" },
+                { q: "Which structure is located immediately OUTSIDE the cell membrane in a plant cell? 🛡️", options: ["Cytoplasm", "Nucleus", "Cell Wall", "Vacuole"], a: 2, explanation: "The rigid Cell Wall surrounds the flexible cell membrane! 🏰" },
+                { q: "Animal cells do NOT have chloroplasts. Why? 🚫☀️", options: ["They burst in water", "They don't undergo photosynthesis", "They have cell walls instead", "They are unicellular"], a: 1, explanation: "Animals get food through nutrition, so they don't need to photosynthesize! 🍔" }
+            ]
         ];
 
-        // DOM Elements
-        const startScreen = document.getElementById('start-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const endScreen = document.getElementById('end-screen');
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const scoreDisplay = document.getElementById('score-display');
-        const questionNumber = document.getElementById('question-number');
-        const progressBar = document.getElementById('progress-bar');
-        
-        // Modal Elements
-        const modal = document.getElementById('feedback-modal');
-        const modalContentBox = document.getElementById('modal-content-box');
-        const modalIcon = document.getElementById('modal-icon');
-        const modalTitle = document.getElementById('modal-title');
-        const modalText = document.getElementById('modal-text');
+        let currentModuleIndex = -1;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let currentQuestions = [];
 
-        function startGame() {
-            // Shuffle questions for variety
-            questions = [...questionBank].sort(() => Math.random() - 0.5);
+        const synth = window.speechSynthesis;
+        let voices = [];
+
+        // Try to load voices
+        function loadVoices() {
+            voices = synth.getVoices();
+        }
+        
+        loadVoices();
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = loadVoices;
+        }
+
+        // DOM Elements
+        const screens = ['start-screen', 'study-screen', 'level-screen', 'game-screen', 'end-screen'];
+        
+        function showScreen(screenId) {
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (id === screenId) {
+                    el.classList.remove('hidden');
+                    // Retrigger animation
+                    el.classList.remove('pop-in');
+                    void el.offsetWidth;
+                    el.classList.add('pop-in');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+        }
+
+        function startModule(index) {
+            currentModuleIndex = index;
+            // Copy and shuffle questions for this module
+            currentQuestions = [...modules[index]].sort(() => Math.random() - 0.5);
             currentQuestionIndex = 0;
             score = 0;
-            updateScore();
             
-            // UI Transitions
-            startScreen.classList.add('hidden');
-            endScreen.classList.add('hidden');
-            gameScreen.classList.remove('hidden');
-            gameScreen.classList.add('pop-in');
-            
+            synth.cancel();
+
+            document.getElementById('score-display').innerText = score;
+            showScreen('game-screen');
             loadQuestion();
         }
 
+        function restartCurrentModule() {
+            startModule(currentModuleIndex);
+        }
+
         function loadQuestion() {
-            const currentQ = questions[currentQuestionIndex];
+            const currentQ = currentQuestions[currentQuestionIndex];
             
             // Update Progress UI
-            questionNumber.innerText = currentQuestionIndex + 1;
-            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
-            progressBar.style.width = `${progressPercent}%`;
+            document.getElementById('question-number').innerText = currentQuestionIndex + 1;
+            const progressPercent = ((currentQuestionIndex) / currentQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
             
             // Set Question Text
-            questionText.innerText = currentQ.q;
+            document.getElementById('question-text').innerText = currentQ.q;
             
             // Clear previous options
+            const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = '';
             
             // Generate Option Buttons
             currentQ.options.forEach((opt, index) => {
                 const btn = document.createElement('button');
-                btn.className = "option-btn w-full bg-white border-2 border-pink-200 text-gray-700 font-semibold py-3 px-6 rounded-2xl text-left shadow-sm hover:shadow-md";
+                btn.className = "option-btn w-full bg-white border-2 border-pink-200 text-gray-700 font-semibold py-3 px-4 rounded-2xl text-left shadow-sm";
                 btn.innerText = opt;
                 btn.onclick = () => checkAnswer(index);
                 optionsContainer.appendChild(btn);
             });
         }
 
+        function speakQuestion() {
+            if (synth.speaking) {
+                synth.cancel(); // Stop if already speaking
+            }
+            
+            const currentQ = currentQuestions[currentQuestionIndex];
+            
+            // Remove emojis before speaking to make it sound better
+            const textToSpeak = currentQ.q.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            
+            // Try to find a nice female English voice (matches the "glam" theme)
+            const preferredVoices = voices.filter(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Google UK English Female') || v.name.includes('Victoria')));
+            
+            if (preferredVoices.length > 0) {
+                utterance.voice = preferredVoices[0];
+            } else if (voices.length > 0) {
+                 // fallback to english
+                 const engVoices = voices.filter(v => v.lang.includes('en'));
+                 if(engVoices.length > 0) {
+                     utterance.voice = engVoices[0];
+                 }
+            }
+
+            utterance.rate = 0.95; // slightly slower for clarity
+            utterance.pitch = 1.1; // slightly higher pitch
+
+            synth.speak(utterance);
+        }
+
         function checkAnswer(selectedIndex) {
-            const currentQ = questions[currentQuestionIndex];
+            const currentQ = currentQuestions[currentQuestionIndex];
             const isCorrect = selectedIndex === currentQ.a;
             
+            synth.cancel();
+
             if (isCorrect) {
                 score++;
-                updateScore();
-                showModal(
-                    true, 
-                    "Yasss! Correct! 💖", 
-                    "You nailed it! " + currentQ.explanation
-                );
+                document.getElementById('score-display').innerText = score;
+                showModal(true, "Yasss! Correct! 💖", "You nailed it! " + currentQ.explanation);
             } else {
-                showModal(
-                    false, 
-                    "Oopsie! 🙈", 
-                    "Not quite right bestie. " + currentQ.explanation
-                );
+                showModal(false, "Oopsie! 🙈", "Not quite right bestie. " + currentQ.explanation);
             }
         }
 
-        function updateScore() {
-            scoreDisplay.innerText = score;
-        }
+        const modal = document.getElementById('feedback-modal');
+        const modalContentBox = document.getElementById('modal-content-box');
 
-        // Custom Modal Function (Replaces standard alerts)
         function showModal(isCorrect, title, text) {
-            modalIcon.innerText = isCorrect ? "🌟" : "💔";
+            document.getElementById('modal-icon').innerText = isCorrect ? "🌟" : "💔";
+            const modalTitle = document.getElementById('modal-title');
             modalTitle.innerText = title;
             modalTitle.className = `title-font text-3xl mb-2 ${isCorrect ? 'text-green-500' : 'text-pink-500'}`;
-            modalText.innerText = text;
+            document.getElementById('modal-text').innerText = text;
             
-            // Show modal
             modal.classList.remove('hidden');
-            // Trigger animation frame for CSS transitions to work
             requestAnimationFrame(() => {
                 modal.classList.remove('opacity-0', 'pointer-events-none');
                 modalContentBox.classList.remove('scale-90');
@@ -340,53 +572,43 @@
         }
 
         function closeModalAndNext() {
-            // Hide modal
             modal.classList.add('opacity-0', 'pointer-events-none');
             modalContentBox.classList.remove('scale-100');
             modalContentBox.classList.add('scale-90');
             
+            synth.cancel();
+
             setTimeout(() => {
                 modal.classList.add('hidden');
                 
-                // Go to next question or end game
                 currentQuestionIndex++;
-                if (currentQuestionIndex < questions.length) {
-                    // Small pop animation for next question
+                if (currentQuestionIndex < currentQuestions.length) {
+                    const gameScreen = document.getElementById('game-screen');
                     gameScreen.classList.remove('pop-in');
-                    void gameScreen.offsetWidth; // Trigger reflow
+                    void gameScreen.offsetWidth; 
                     gameScreen.classList.add('pop-in');
                     loadQuestion();
                 } else {
-                    endGame();
+                    endLevel();
                 }
-            }, 300); // Wait for transition
+            }, 300);
         }
 
-        function endGame() {
-            gameScreen.classList.add('hidden');
-            endScreen.classList.remove('hidden');
-            endScreen.classList.add('pop-in');
-            
+        function endLevel() {
+            showScreen('end-screen');
             document.getElementById('final-score').innerText = score;
             
-            // Custom messages based on score
             const feedbackEl = document.getElementById('feedback-message');
-            if (score === questions.length) {
+            if (score === 10) {
                 feedbackEl.innerText = "Flawless victory! You are an absolute Biology Goddess! 👑✨";
                 feedbackEl.className = "bg-green-50 border-2 border-green-200 rounded-2xl p-4 mb-8 text-lg font-semibold text-green-800";
-            } else if (score >= questions.length * 0.7) {
+            } else if (score >= 7) {
                 feedbackEl.innerText = "Amazing job! You really know your stuff, beautiful! Keep shining! 💖";
                 feedbackEl.className = "bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 mb-8 text-lg font-semibold text-purple-800";
             } else {
-                feedbackEl.innerText = "Good effort, sweetie! Review your notes and try again to slay that top score! 🎀📚";
+                feedbackEl.innerText = "Good effort, sweetie! Review the study guide and try again to slay that top score! 🎀📚";
                 feedbackEl.className = "bg-pink-50 border-2 border-pink-200 rounded-2xl p-4 mb-8 text-lg font-semibold text-pink-800";
             }
-        }
-
-        function resetGame() {
-            startScreen.classList.remove('hidden');
-            endScreen.classList.add('hidden');
-            startScreen.classList.add('pop-in');
         }
     </script>
 </body>
