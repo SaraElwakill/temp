@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glam Bio Quest 🎀✨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffe1e8 0%, #e6e6fa 50%, #f0f8ff 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow-x: hidden;
+        }
+
+        .title-font {
+            font-family: 'Pacifico', cursive;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating background items */
+        .floating-item {
+            position: absolute;
+            opacity: 0.6;
+            animation: floatup 10s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes floatup {
+            0% { transform: translateY(100vh) rotate(0deg) scale(0.8); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-20vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        /* Card styles and pop animations */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 4px solid #ffb6c1;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.8);
+        }
+
+        .pop-in {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Option buttons styling */
+        .option-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 7px 15px rgba(255, 105, 180, 0.3);
+            border-color: #ff69b4;
+            color: #d13682;
+            background-color: #fff0f5;
+        }
+
+        .option-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Custom Modal for feedback */
+        #feedback-modal {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative p-4 text-gray-800">
+
+    <!-- Decorative background elements -->
+    <div class="floating-item text-4xl" style="left: 10%; animation-duration: 12s; animation-delay: 0s;">🌸</div>
+    <div class="floating-item text-3xl" style="left: 25%; animation-duration: 15s; animation-delay: 2s;">✨</div>
+    <div class="floating-item text-5xl" style="left: 40%; animation-duration: 11s; animation-delay: 4s;">🎀</div>
+    <div class="floating-item text-4xl" style="left: 60%; animation-duration: 14s; animation-delay: 1s;">💖</div>
+    <div class="floating-item text-2xl" style="left: 75%; animation-duration: 10s; animation-delay: 3s;">👑</div>
+    <div class="floating-item text-4xl" style="left: 85%; animation-duration: 13s; animation-delay: 5s;">💅</div>
+
+    <!-- Main App Container -->
+    <main class="glass-card rounded-3xl p-6 md:p-10 max-w-xl w-full z-10 relative">
+        
+        <!-- Screen 1: Start Menu -->
+        <div id="start-screen" class="text-center pop-in">
+            <h1 class="title-font text-5xl md:text-6xl text-pink-500 mb-2 drop-shadow-md">Glam Bio Quest</h1>
+            <p class="text-lg text-purple-600 font-semibold mb-6">Slay your Edexcel Biology Revision! ✨</p>
+            
+            <div class="bg-pink-50 rounded-2xl p-4 mb-8 border border-pink-200 shadow-inner">
+                <p class="text-gray-700 text-sm md:text-base leading-relaxed">
+                    Welcome to the academy, gorgeous! 💖 Get ready to test your knowledge on the classification of living organisms, cells, and everything biology. <br><br>
+                    <strong>Mission:</strong> Answer correctly, collect stars, and prove you're both brainy and beautiful!
+                </p>
+            </div>
+            
+            <button onclick="startGame()" class="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-xl py-3 px-10 rounded-full shadow-lg hover:shadow-xl hover:from-pink-500 hover:to-purple-500 transition-all duration-300 transform hover:-translate-y-1">
+                Let's Glow! 🚀
+            </button>
+        </div>
+
+        <!-- Screen 2: Game Area -->
+        <div id="game-screen" class="hidden">
+            <!-- Header & Progress -->
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-pink-500 font-bold text-lg">Score: <span id="score-display">0</span> ✨</div>
+                <div class="text-purple-500 font-bold">Q <span id="question-number">1</span>/10</div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-3 mb-8 shadow-inner">
+                <div id="progress-bar" class="bg-gradient-to-r from-pink-400 to-purple-400 h-3 rounded-full transition-all duration-500" style="width: 10%"></div>
+            </div>
+
+            <!-- Question -->
+            <h2 id="question-text" class="text-xl md:text-2xl font-bold text-gray-800 text-center mb-8 min-h-[80px] flex items-center justify-center">
+                Question goes here?
+            </h2>
+
+            <!-- Options Grid -->
+            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Buttons injected via JS -->
+            </div>
+        </div>
+
+        <!-- Screen 3: End Screen -->
+        <div id="end-screen" class="hidden text-center">
+            <h1 class="title-font text-5xl text-pink-500 mb-4">You did it, Queen! 👑</h1>
+            <p class="text-xl text-gray-700 mb-2">Your Final Glam Score:</p>
+            <div class="text-6xl font-bold text-purple-600 mb-6 drop-shadow-lg"><span id="final-score">0</span>/10</div>
+            
+            <div id="feedback-message" class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 mb-8 text-lg font-semibold text-purple-800">
+                Feedback message here!
+            </div>
+            
+            <button onclick="resetGame()" class="bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold text-lg py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:from-pink-500 hover:to-purple-500 transition-all duration-300">
+                Play Again & Slay Harder! 💅
+            </button>
+        </div>
+    </main>
+
+    <!-- Custom Feedback Modal (replaces alert) -->
+    <div id="feedback-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 pointer-events-none">
+        <div id="modal-content-box" class="bg-white border-4 border-pink-300 rounded-3xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl transform scale-90 modal-content">
+            <div id="modal-icon" class="text-6xl mb-4">✨</div>
+            <h3 id="modal-title" class="title-font text-3xl text-pink-500 mb-2">Title</h3>
+            <p id="modal-text" class="text-gray-700 mb-6 font-semibold">Message goes here.</p>
+            <button onclick="closeModalAndNext()" class="bg-pink-400 text-white font-bold py-2 px-6 rounded-full hover:bg-pink-500 transition-colors w-full">
+                Continue 🎀
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        // Question Bank (Strictly aligned with provided Edexcel PDF)
+        const questionBank = [
+            {
+                q: "What does the 'S' in the MRS GREN characteristics stand for? 🌸",
+                options: ["Sleep", "Sensitivity", "Singing", "Synthesis"],
+                a: 1,
+                explanation: "Sensitivity (or Irritability) is the ability to detect or sense stimuli! 💅"
+            },
+            {
+                q: "In the universal binomial system, how should we correctly write the scientific name for humans? ✍️",
+                options: ["homo sapiens", "Homo Sapiens", "Homo sapiens", "HOMO SAPIENS"],
+                a: 2,
+                explanation: "The Genus is capitalized (Homo) and the species is small (sapiens). Slay that Latin! ✨"
+            },
+            {
+                q: "Which of the following is absolutely NOT considered a living organism? 🚫",
+                options: ["Bacteria", "Fungi", "Viruses", "Protista"],
+                a: 2,
+                explanation: "Viruses are not considered living organisms. They can't sit with us! 🙅‍♀️"
+            },
+            {
+                q: "I have dry scaly skin to reduce water loss, and I lay eggs with waterproof shells. What am I? 🦎",
+                options: ["Amphibian", "Reptile", "Bird", "Mammal"],
+                a: 1,
+                explanation: "Reptiles have dry scaly skin! Amphibians have moist skin. Keep glowing! ✨"
+            },
+            {
+                q: "How many pairs of jointed legs does a glamorous Arachnid (like a spider) have? 🕷️",
+                options: ["3 pairs", "4 pairs", "5 pairs", "Many pairs"],
+                a: 1,
+                explanation: "Arachnids have 4 pairs of jointed legs originating from the cephalothorax! 👠"
+            },
+            {
+                q: "Which of these is a fabulous feature ONLY found in Plant Cells? 🌿",
+                options: ["Nucleus", "Cytoplasm", "Cell Membrane", "Cellulose Cell Wall"],
+                a: 3,
+                explanation: "Plant cells wear a rigid cellulose cell wall for protection and support! Animal cells don't. 🧱"
+            },
+            {
+                q: "Where does aerobic respiration and energy release happen in the cell? (The powerhouse!) ⚡",
+                options: ["Mitochondria", "Ribosomes", "Chloroplasts", "Sap Vacuole"],
+                a: 0,
+                explanation: "Mitochondria are the site of energy release! Ribosomes are for making protein. 💖"
+            },
+            {
+                q: "Look at class Insects! How is their fabulous segmented body divided? 🦋",
+                options: ["Cephalothorax and Abdomen", "Head, Thorax, and Abdomen", "Head and Trunk", "Just Abdomen"],
+                a: 1,
+                explanation: "Insects have 3 regions: Head, Thorax, and Abdomen to facilitate movement! 💃"
+            },
+            {
+                q: "What do Mammals have that secrete milk for their cute babies? 🍼",
+                options: ["External ear pinna", "Whiskers", "Mammary glands", "Different types of teeth"],
+                a: 2,
+                explanation: "Mammary glands secrete milk for mammalian offspring. So maternal! 🎀"
+            },
+            {
+                q: "Which characteristic of life (MRS GREN) is 'the permanent increase in size or dry mass'? 🌱",
+                options: ["Nutrition", "Reproduction", "Excretion", "Growth"],
+                a: 3,
+                explanation: "Growth is the permanent increase in size or dry mass! Keep growing, queen! 👑"
+            }
+        ];
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const questionNumber = document.getElementById('question-number');
+        const progressBar = document.getElementById('progress-bar');
+        
+        // Modal Elements
+        const modal = document.getElementById('feedback-modal');
+        const modalContentBox = document.getElementById('modal-content-box');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+
+        function startGame() {
+            // Shuffle questions for variety
+            questions = [...questionBank].sort(() => Math.random() - 0.5);
+            currentQuestionIndex = 0;
+            score = 0;
+            updateScore();
+            
+            // UI Transitions
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('pop-in');
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const currentQ = questions[currentQuestionIndex];
+            
+            // Update Progress UI
+            questionNumber.innerText = currentQuestionIndex + 1;
+            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            
+            // Set Question Text
+            questionText.innerText = currentQ.q;
+            
+            // Clear previous options
+            optionsContainer.innerHTML = '';
+            
+            // Generate Option Buttons
+            currentQ.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full bg-white border-2 border-pink-200 text-gray-700 font-semibold py-3 px-6 rounded-2xl text-left shadow-sm hover:shadow-md";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const currentQ = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === currentQ.a;
+            
+            if (isCorrect) {
+                score++;
+                updateScore();
+                showModal(
+                    true, 
+                    "Yasss! Correct! 💖", 
+                    "You nailed it! " + currentQ.explanation
+                );
+            } else {
+                showModal(
+                    false, 
+                    "Oopsie! 🙈", 
+                    "Not quite right bestie. " + currentQ.explanation
+                );
+            }
+        }
+
+        function updateScore() {
+            scoreDisplay.innerText = score;
+        }
+
+        // Custom Modal Function (Replaces standard alerts)
+        function showModal(isCorrect, title, text) {
+            modalIcon.innerText = isCorrect ? "🌟" : "💔";
+            modalTitle.innerText = title;
+            modalTitle.className = `title-font text-3xl mb-2 ${isCorrect ? 'text-green-500' : 'text-pink-500'}`;
+            modalText.innerText = text;
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            // Trigger animation frame for CSS transitions to work
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modalContentBox.classList.remove('scale-90');
+                modalContentBox.classList.add('scale-100');
+            });
+        }
+
+        function closeModalAndNext() {
+            // Hide modal
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContentBox.classList.remove('scale-100');
+            modalContentBox.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                
+                // Go to next question or end game
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    // Small pop animation for next question
+                    gameScreen.classList.remove('pop-in');
+                    void gameScreen.offsetWidth; // Trigger reflow
+                    gameScreen.classList.add('pop-in');
+                    loadQuestion();
+                } else {
+                    endGame();
+                }
+            }, 300); // Wait for transition
+        }
+
+        function endGame() {
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+            endScreen.classList.add('pop-in');
+            
+            document.getElementById('final-score').innerText = score;
+            
+            // Custom messages based on score
+            const feedbackEl = document.getElementById('feedback-message');
+            if (score === questions.length) {
+                feedbackEl.innerText = "Flawless victory! You are an absolute Biology Goddess! 👑✨";
+                feedbackEl.className = "bg-green-50 border-2 border-green-200 rounded-2xl p-4 mb-8 text-lg font-semibold text-green-800";
+            } else if (score >= questions.length * 0.7) {
+                feedbackEl.innerText = "Amazing job! You really know your stuff, beautiful! Keep shining! 💖";
+                feedbackEl.className = "bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 mb-8 text-lg font-semibold text-purple-800";
+            } else {
+                feedbackEl.innerText = "Good effort, sweetie! Review your notes and try again to slay that top score! 🎀📚";
+                feedbackEl.className = "bg-pink-50 border-2 border-pink-200 rounded-2xl p-4 mb-8 text-lg font-semibold text-pink-800";
+            }
+        }
+
+        function resetGame() {
+            startScreen.classList.remove('hidden');
+            endScreen.classList.add('hidden');
+            startScreen.classList.add('pop-in');
+        }
+    </script>
+</body>
+</html>
