@@ -88,11 +88,47 @@
             transform: scale(0.95);
         }
 
+        .speak-keyword {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        .speak-keyword:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .speak-keyword:active {
+            transform: scale(0.95);
+        }
+        .keyword-icon {
+            font-size: 0.8em;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
         /* Custom Scrollbar for Study Guide */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #fdf2f8; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #fbcfe8; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #f9a8d4; }
+
+        .speak-keyword {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        .speak-keyword:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .speak-keyword:active {
+            transform: scale(0.95);
+        }
+        .keyword-icon {
+            font-size: 0.8em;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center relative p-4">
@@ -130,113 +166,124 @@
 
         <!-- Screen 2: Study Guide -->
         <div id="study-screen" class="hidden flex flex-col h-full pop-in">
-            <h2 class="title-font text-4xl text-teal-500 text-center mb-4">Study Guide 📖✨</h2>
+            <h2 class="title-font text-4xl text-teal-500 text-center mb-2">Study Guide 📖✨</h2>
+            <p class="text-center text-sm text-gray-500 mb-4 italic">Tap the highlighted words to hear how they sound! 🔊</p>
             
-            <div class="overflow-y-auto flex-grow pr-2 space-y-4 mb-4">
+            <div class="overflow-y-auto flex-grow pr-2 space-y-6 mb-4">
                 
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                    <h3 class="font-bold text-lg text-blue-700 mb-2">🎀 MRS GREN (Characteristics of Life)</h3>
-                    <ul class="text-sm list-disc pl-5 space-y-2">
-                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Movement:</strong> Action causing change of position.</li>
-                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Respiration:</strong> Chemical reactions breaking down nutrients to release <em>energy</em>.</li>
-                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Sensitivity:</strong> Detecting internal/external <em>stimuli</em> & responding.</li>
-                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Growth:</strong> Permanent increase in size/dry mass.</li>
-                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Reproduction:</strong> Producing new offspring (preserving species).</li>
-                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Excretion:</strong> Removal of metabolic waste & excess substances.</li>
-                        <li><strong class="text-blue-800 bg-blue-200 px-1 rounded">Nutrition:</strong> Taking in materials for energy & development.</li>
+                <div class="bg-purple-50 p-5 rounded-2xl border-2 border-purple-200 shadow-sm">
+                    <h3 class="font-bold text-xl text-purple-700 mb-3 border-b-2 border-purple-200 pb-2">👑 1. Classification of Living Organisms</h3>
+                    <p class="text-sm mb-2"><strong>5 Major Groups:</strong> Animals, Plants, Fungi, Bacteria, & Protista.</p>
+                    <p class="text-sm mb-2 text-red-600 font-semibold">⚠️ Viruses are NOT considered living organisms!</p>
+                    <p class="text-sm mb-2"><strong>Order (KPCOFGS):</strong> Kingdom ➔ Phylum ➔ Class ➔ Order ➔ Family ➔ Genus ➔ Species <br><span class="text-xs text-gray-500 italic">(King Philip Came Over From Great Spain)</span></p>
+                    <ul class="text-sm list-disc pl-5 space-y-2 mb-3">
+                        <li><strong class="speak-keyword bg-purple-200 px-1 rounded text-purple-800" onclick="speakWord('Genus')">Genus<span class="keyword-icon">🔊</span>:</strong> A group of similar species.</li>
+                        <li><strong class="speak-keyword bg-purple-200 px-1 rounded text-purple-800" onclick="speakWord('Species')">Species<span class="keyword-icon">🔊</span>:</strong> Group that can reproduce and give <span class="bg-yellow-200 px-1 rounded">fertile offspring</span>.</li>
                     </ul>
-                </div>
-
-                <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
-                    <h3 class="font-bold text-lg text-purple-700 mb-2">👑 Classification & Naming</h3>
-                    <p class="text-sm mb-2"><strong>Taxa Order:</strong> <span class="text-purple-600 font-semibold">Kingdom ➔ Phylum ➔ Class ➔ Order ➔ Family ➔ Genus ➔ Species</span></p>
-                    <p class="text-sm mb-1"><strong>Species:</strong> Group that can reproduce <span class="bg-yellow-200 px-1 rounded">fertile offspring</span>.</p>
-                    <p class="text-sm"><strong>Binomial System:</strong> <span class="text-red-500">Genus (Capitalized)</span> + <span class="text-blue-500">species (lowercase)</span>. e.g., <em>Homo sapiens</em>.</p>
-                </div>
-                
-                 <div class="bg-green-50 p-4 rounded-xl border border-green-200">
-                    <h3 class="font-bold text-lg text-green-700 mb-2">🔬 Animal vs Plant Cells (Key Differences)</h3>
-                    <div class="grid grid-cols-2 gap-2 text-sm text-center">
-                         <div class="font-bold bg-green-200 rounded p-1">Animal Cell 🐾</div>
-                         <div class="font-bold bg-green-200 rounded p-1">Plant Cell 🌿</div>
-                         
-                         <div class="bg-white p-1 rounded border">No Cell Wall</div>
-                         <div class="bg-white p-1 rounded border font-semibold text-green-700">Cellulose Cell Wall</div>
-                         
-                         <div class="bg-white p-1 rounded border">No Chloroplasts</div>
-                         <div class="bg-white p-1 rounded border font-semibold text-green-700">Has Chloroplasts</div>
-                         
-                         <div class="bg-white p-1 rounded border">Small/No Vacuole</div>
-                         <div class="bg-white p-1 rounded border font-semibold text-green-700">Large Sap Vacuole</div>
-                         
-                         <div class="bg-white p-1 rounded border">Stores Carbohydrates as <span class="font-bold text-blue-600">Glycogen</span></div>
-                         <div class="bg-white p-1 rounded border">Stores Carbohydrates as <span class="font-bold text-blue-600">Starch</span></div>
+                    <div class="bg-purple-100 p-3 rounded-xl border border-purple-300">
+                        <p class="text-sm font-bold text-purple-800 mb-1"><strong class="speak-keyword bg-purple-200 px-1 rounded" onclick="speakWord('Binomial System')">Binomial System<span class="keyword-icon">🔊</span>:</strong></p>
+                        <p class="text-sm text-purple-700">Internationally approved Latin names. <span class="font-bold text-red-600">Genus (Capitalized)</span> + <span class="font-bold text-blue-600">species (lowercase)</span>. Must be underlined or italics. Example: <em class="speak-keyword bg-white px-1 rounded" onclick="speakWord('Homo sapiens')">Homo sapiens<span class="keyword-icon">🔊</span></em>.</p>
+                    </div>
+                    <div class="mt-3 text-sm">
+                        <strong>Importance:</strong> 1. Facilitate <strong class="speak-keyword bg-purple-200 px-1 rounded text-purple-800" onclick="speakWord('identification')">identification<span class="keyword-icon">🔊</span></strong> 2. Facilitate <strong class="speak-keyword bg-purple-200 px-1 rounded text-purple-800" onclick="speakWord('study')">study<span class="keyword-icon">🔊</span></strong>
                     </div>
                 </div>
 
-                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-200">
-                    <h3 class="font-bold text-lg text-indigo-700 mb-2">⚙️ Cell Organelles</h3>
-                    <ul class="text-sm space-y-1">
-                        <li><strong>Nucleus:</strong> Controls activities; contains chromosomes (DNA).</li>
-                        <li><strong>Cytoplasm:</strong> Site of metabolic chemical reactions.</li>
-                        <li><strong>Cell Membrane:</strong> Selectively permeable; controls entry/exit.</li>
-                        <li><strong>Mitochondria:</strong> Site of <span class="bg-yellow-200 px-1 rounded">aerobic respiration</span> (energy release).</li>
-                        <li><strong>Ribosomes:</strong> Site of <span class="bg-pink-200 px-1 rounded">protein synthesis</span>.</li>
-                    </ul>
-                </div>
-                
-                <div class="bg-pink-50 p-4 rounded-xl border border-pink-200">
-                    <h3 class="font-bold text-lg text-pink-700 mb-2">🐾 Vertebrates Comparison</h3>
-                    <ul class="text-sm space-y-2">
-                        <li><strong>Fish 🐟:</strong> Scales, gills, streamline shape, fins.</li>
-                        <li><strong>Amphibians 🐸:</strong> <span class="font-semibold text-pink-600">Moist skin</span>, jelly eggs in water. Tadpoles (gills) ➔ Adults (lungs).</li>
-                        <li><strong>Reptiles 🦎:</strong> <span class="font-semibold text-pink-600">Dry scaly skin</span>, waterproof eggs.</li>
-                        <li><strong>Birds 🦅:</strong> <span class="font-semibold text-pink-600">Feathers</span>, wings, hard eggs, beaks.</li>
-                        <li><strong>Mammals 🐄:</strong> <span class="font-semibold text-pink-600">Hair/fur</span>, <span class="font-semibold text-blue-600">Mammary glands (milk)</span>, external ear pinna, different teeth.</li>
+                <div class="bg-blue-50 p-5 rounded-2xl border-2 border-blue-200 shadow-sm">
+                    <h3 class="font-bold text-xl text-blue-700 mb-3 border-b-2 border-blue-200 pb-2">🎀 2. Characteristics of Living Organisms (MRS GREN)</h3>
+                    <ul class="text-sm space-y-3">
+                        <li><strong class="speak-keyword bg-blue-200 px-2 py-1 rounded text-blue-800" onclick="speakWord('Movement')">Movement<span class="keyword-icon">🔊</span>:</strong> An action by an organism causing a change of position or place.</li>
+                        <li><strong class="speak-keyword bg-blue-200 px-2 py-1 rounded text-blue-800" onclick="speakWord('Respiration')">Respiration<span class="keyword-icon">🔊</span>:</strong> Chemical reactions in cells that break down nutrient molecules and release <em>energy</em> for metabolism.</li>
+                        <li><strong class="speak-keyword bg-blue-200 px-2 py-1 rounded text-blue-800" onclick="speakWord('Sensitivity')">Sensitivity<span class="keyword-icon">🔊</span>:</strong> Ability to detect/sense stimuli in internal/external environment & make appropriate responses.</li>
+                        <li><strong class="speak-keyword bg-blue-200 px-2 py-1 rounded text-blue-800" onclick="speakWord('Growth')">Growth<span class="keyword-icon">🔊</span>:</strong> Permanent increase in size or dry mass.</li>
+                        <li><strong class="speak-keyword bg-blue-200 px-2 py-1 rounded text-blue-800" onclick="speakWord('Reproduction')">Reproduction<span class="keyword-icon">🔊</span>:</strong> Produce new offsprings of their own type to preserve the species.</li>
+                        <li><strong class="speak-keyword bg-blue-200 px-2 py-1 rounded text-blue-800" onclick="speakWord('Excretion')">Excretion<span class="keyword-icon">🔊</span>:</strong> Removal of waste products of metabolism and substances in excess of requirements.</li>
+                        <li><strong class="speak-keyword bg-blue-200 px-2 py-1 rounded text-blue-800" onclick="speakWord('Nutrition')">Nutrition<span class="keyword-icon">🔊</span>:</strong> Taking in of materials for energy, growth and development.</li>
                     </ul>
                 </div>
 
-                <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
-                    <h3 class="font-bold text-lg text-yellow-700 mb-2">🦋 Arthropods Comparison</h3>
-                    <p class="text-sm italic mb-2 text-center text-gray-600">All share: Segmented bodies, Jointed legs, Exoskeleton</p>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left border-collapse bg-white rounded-lg overflow-hidden">
-                            <thead class="bg-yellow-100 text-yellow-800">
-                                <tr>
-                                    <th class="p-2 border">Class</th>
-                                    <th class="p-2 border">Body Parts</th>
-                                    <th class="p-2 border">Legs</th>
-                                    <th class="p-2 border">Key Feature</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="p-2 border font-bold">Insects 🐝</td>
-                                    <td class="p-2 border">3 (Head, Thorax, Abdomen)</td>
-                                    <td class="p-2 border">3 pairs</td>
-                                    <td class="p-2 border">1-2 pairs wings, 1 pair antenna</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border font-bold">Arachnids 🕷️</td>
-                                    <td class="p-2 border">2 (Cephalothorax, Abdomen)</td>
-                                    <td class="p-2 border">4 pairs</td>
-                                    <td class="p-2 border">Simple eyes, no antenna, chelicerae</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border font-bold">Crustaceans 🦀</td>
-                                    <td class="p-2 border">2 (Cephalothorax, Abdomen)</td>
-                                    <td class="p-2 border">&gt;4 pairs</td>
-                                    <td class="p-2 border">Gills, 2 pairs antenna</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 border font-bold">Myriapods 🐛</td>
-                                    <td class="p-2 border">Head + many identical segments</td>
-                                    <td class="p-2 border">Many</td>
-                                    <td class="p-2 border">1 pair antenna</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="bg-red-50 p-5 rounded-2xl border-2 border-red-200 shadow-sm">
+                    <h3 class="font-bold text-xl text-red-700 mb-3 border-b-2 border-red-200 pb-2">🦁 3. Animal Kingdom Features</h3>
+                    <ul class="text-sm list-disc pl-5 space-y-1 mb-3 text-red-900">
+                        <li><strong class="speak-keyword bg-red-200 px-1 rounded" onclick="speakWord('Multicellular')">Multicellular<span class="keyword-icon">🔊</span></strong> (composed of many cells).</li>
+                        <li>No cellulose cell wall & no chloroplasts.</li>
+                        <li>Store carbohydrates as <strong class="speak-keyword bg-red-200 px-1 rounded" onclick="speakWord('Glycogen')">Glycogen<span class="keyword-icon">🔊</span></strong> in liver & muscle cells.</li>
+                        <li>Limited growth until puberty.</li>
+                        <li>Move freely.</li>
+                        <li>Have <strong class="speak-keyword bg-red-200 px-1 rounded" onclick="speakWord('nervous coordination')">nervous coordination<span class="keyword-icon">🔊</span></strong> & <strong class="speak-keyword bg-red-200 px-1 rounded" onclick="speakWord('hormonal coordination')">hormonal coordination<span class="keyword-icon">🔊</span></strong>.</li>
+                    </ul>
+                    <p class="text-sm font-bold text-red-800">Classified into 2 main groups: <strong class="speak-keyword bg-red-200 px-1 rounded" onclick="speakWord('Vertebrates')">Vertebrates<span class="keyword-icon">🔊</span></strong> & <strong class="speak-keyword bg-red-200 px-1 rounded" onclick="speakWord('Invertebrates')">Invertebrates<span class="keyword-icon">🔊</span></strong></p>
+                </div>
+
+                <div class="bg-pink-50 p-5 rounded-2xl border-2 border-pink-200 shadow-sm">
+                    <h3 class="font-bold text-xl text-pink-700 mb-3 border-b-2 border-pink-200 pb-2">🐾 4. Vertebrates (5 Groups)</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white p-3 rounded-xl border border-pink-100 shadow-sm">
+                            <h4 class="font-bold text-pink-600 mb-1"><strong class="speak-keyword bg-pink-100 px-1 rounded" onclick="speakWord('Fish')">1. Fish 🐟<span class="keyword-icon">🔊</span></strong></h4>
+                            <p class="text-sm">Streamline shape, covered with <strong>scales</strong>, <strong class="speak-keyword bg-pink-100 px-1 rounded text-pink-700" onclick="speakWord('lateral line of sensation')">lateral line of sensation<span class="keyword-icon">🔊</span></strong>, gills to extract oxygen, bone/cartilage skeleton.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-pink-100 shadow-sm">
+                            <h4 class="font-bold text-pink-600 mb-1"><strong class="speak-keyword bg-pink-100 px-1 rounded" onclick="speakWord('Amphibians')">2. Amphibians 🐸<span class="keyword-icon">🔊</span></strong> (e.g., Frog, Salamander)</h4>
+                            <p class="text-sm"><strong>Moist skin</strong> with fine capillaries, <strong class="speak-keyword bg-pink-100 px-1 rounded text-pink-700" onclick="speakWord('external ear drums')">external ear drums<span class="keyword-icon">🔊</span></strong>, lay soft jelly-like eggs in water. <em>Tadpoles:</em> external gills & tails. <em>Adults:</em> lungs.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-pink-100 shadow-sm">
+                            <h4 class="font-bold text-pink-600 mb-1"><strong class="speak-keyword bg-pink-100 px-1 rounded" onclick="speakWord('Reptiles')">3. Reptiles 🦎<span class="keyword-icon">🔊</span></strong> (e.g., Lizards, snakes, crocodile)</h4>
+                            <p class="text-sm"><strong>Dry scaly skin</strong> to reduce water loss, lay waterproof eggs, eardrum inside heads, short/no limbs, body divided into head, neck, trunk & tail.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-pink-100 shadow-sm">
+                            <h4 class="font-bold text-pink-600 mb-1"><strong class="speak-keyword bg-pink-100 px-1 rounded" onclick="speakWord('Birds')">4. Birds 🦅<span class="keyword-icon">🔊</span></strong> (e.g., eagle, owl, hawk)</h4>
+                            <p class="text-sm">Covered with <strong>feathers</strong> (insulating, decrease density, waterproof oil), modified forelimbs into wings, tail for direction, eardrums inside head, lungs, lay <strong>hard shell eggs</strong>, <strong class="speak-keyword bg-pink-100 px-1 rounded text-pink-700" onclick="speakWord('modified beaks')">modified beaks<span class="keyword-icon">🔊</span></strong>.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-pink-100 shadow-sm">
+                            <h4 class="font-bold text-pink-600 mb-1"><strong class="speak-keyword bg-pink-100 px-1 rounded" onclick="speakWord('Mammals')">5. Mammals 🐄<span class="keyword-icon">🔊</span></strong></h4>
+                            <p class="text-sm">Body covered with <strong>hairy skin or fur</strong>, <strong class="speak-keyword bg-pink-100 px-1 rounded text-pink-700" onclick="speakWord('external ear pinna')">external ear pinna<span class="keyword-icon">🔊</span></strong>, constant body temp, <strong class="speak-keyword bg-pink-100 px-1 rounded text-pink-700" onclick="speakWord('mammary glands')">mammary glands (secrete milk)<span class="keyword-icon">🔊</span></strong>, different types of teeth, some have whiskers.</p>
+                        </div>
                     </div>
+                </div>
+
+                <div class="bg-yellow-50 p-5 rounded-2xl border-2 border-yellow-200 shadow-sm">
+                    <h3 class="font-bold text-xl text-yellow-700 mb-3 border-b-2 border-yellow-200 pb-2">🦋 5. Invertebrates & Arthropods (4 Classes)</h3>
+                    <p class="text-sm mb-3">Invertebrates have NO vertebral column. The largest group is Arthropods. All Arthropods share: <strong>1. Segmented bodies 2. Jointed legs 3. <strong class="speak-keyword bg-yellow-200 px-1 rounded text-yellow-800" onclick="speakWord('Exoskeleton')">Exoskeleton<span class="keyword-icon">🔊</span></strong></strong></p>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-white p-3 rounded-xl border border-yellow-100 shadow-sm">
+                            <h4 class="font-bold text-yellow-600 mb-1"><strong class="speak-keyword bg-yellow-100 px-1 rounded" onclick="speakWord('Insects')">1. Insects 🐝<span class="keyword-icon">🔊</span></strong> (e.g., bees, silkworm)</h4>
+                            <p class="text-sm"><strong>3 segments</strong> (head, thorax, abdomen). <strong>3 pairs jointed legs</strong>. <strong class="speak-keyword bg-yellow-100 px-1 rounded text-yellow-700" onclick="speakWord('Compound eyes')">Compound eyes<span class="keyword-icon">🔊</span></strong>. 1 pair antenna. Wings. Chitin exoskeleton.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-yellow-100 shadow-sm">
+                            <h4 class="font-bold text-yellow-600 mb-1"><strong class="speak-keyword bg-yellow-100 px-1 rounded" onclick="speakWord('Arachnids')">2. Arachnids 🕷️<span class="keyword-icon">🔊</span></strong> (e.g., spiders, scorpions)</h4>
+                            <p class="text-sm"><strong>2 segments</strong> (cephalothorax, abdomen). <strong>4 pairs jointed legs</strong> from cephalothorax ending in claws. No wings. <strong class="speak-keyword bg-yellow-100 px-1 rounded text-yellow-700" onclick="speakWord('Simple eyes')">Simple eyes<span class="keyword-icon">🔊</span></strong>. NO antenna, pair of <strong class="speak-keyword bg-yellow-100 px-1 rounded text-yellow-700" onclick="speakWord('chelicerae')">chelicerae<span class="keyword-icon">🔊</span></strong> to hold prey.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-yellow-100 shadow-sm">
+                            <h4 class="font-bold text-yellow-600 mb-1"><strong class="speak-keyword bg-yellow-100 px-1 rounded" onclick="speakWord('Crustaceans')">3. Crustaceans 🦀<span class="keyword-icon">🔊</span></strong></h4>
+                            <p class="text-sm"><strong>2 segments</strong> (cephalothorax, abdomen). <strong>More than 4 pairs legs</strong>. Respire by gills. <strong>TWO pairs antenna</strong>. 1 pair stalked compound eyes. Exoskeleton strengthened by calcium salts. No wings.</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-yellow-100 shadow-sm">
+                            <h4 class="font-bold text-yellow-600 mb-1"><strong class="speak-keyword bg-yellow-100 px-1 rounded" onclick="speakWord('Myriapods')">4. Myriapods 🐛<span class="keyword-icon">🔊</span></strong> (e.g., Millipede, Centipede)</h4>
+                            <p class="text-sm">Body divided into head & identical abdominal segments. 1 pair of legs per segment. Fused ventral segments make it look like 2 pairs. 1 pair antenna. Grows by adding segments.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 p-5 rounded-2xl border-2 border-indigo-200 shadow-sm">
+                    <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b-2 border-indigo-200 pb-2">⚙️ 6. Cell Structure & Organisation</h3>
+                    <p class="text-sm mb-3">The basic unit of life is the cell. <strong class="speak-keyword bg-indigo-200 px-1 rounded text-indigo-800" onclick="speakWord('Unicellular')">Unicellular<span class="keyword-icon">🔊</span></strong> (1 cell) vs <strong class="speak-keyword bg-indigo-200 px-1 rounded text-indigo-800" onclick="speakWord('Multicellular')">Multicellular<span class="keyword-icon">🔊</span></strong> (>1 cell).</p>
+                    
+                    <h4 class="font-bold text-indigo-800 text-md mt-4 mb-2">Common Organelles (Animal & Plant) 🤝</h4>
+                    <ul class="text-sm space-y-2 mb-4">
+                        <li><strong class="speak-keyword bg-indigo-200 px-1 rounded text-indigo-900" onclick="speakWord('Nucleus')">Nucleus<span class="keyword-icon">🔊</span>:</strong> Controls all cell activities & starts division. Contains <strong class="speak-keyword bg-indigo-100 px-1 rounded text-indigo-700" onclick="speakWord('chromosomes')">chromosomes<span class="keyword-icon">🔊</span></strong> (made of DNA with genetic codes).</li>
+                        <li><strong class="speak-keyword bg-indigo-200 px-1 rounded text-indigo-900" onclick="speakWord('Cytoplasm')">Cytoplasm<span class="keyword-icon">🔊</span>:</strong> Jelly-like substance where metabolic chemical reactions take place. Stores food/wastes.</li>
+                        <li><strong class="speak-keyword bg-indigo-200 px-1 rounded text-indigo-900" onclick="speakWord('Cell surface membrane')">Cell surface membrane<span class="keyword-icon">🔊</span>:</strong> Proteins & lipids. <strong class="speak-keyword bg-indigo-100 px-1 rounded text-indigo-700" onclick="speakWord('Selectively permeable')">Selectively permeable<span class="keyword-icon">🔊</span></strong>; controls molecules in/out.</li>
+                        <li><strong class="speak-keyword bg-indigo-200 px-1 rounded text-indigo-900" onclick="speakWord('Mitochondria')">Mitochondria<span class="keyword-icon">🔊</span>:</strong> Have enzymes. Site of <strong class="speak-keyword bg-indigo-100 px-1 rounded text-indigo-700" onclick="speakWord('aerobic respiration')">aerobic respiration<span class="keyword-icon">🔊</span></strong> and energy release.</li>
+                        <li><strong class="speak-keyword bg-indigo-200 px-1 rounded text-indigo-900" onclick="speakWord('Ribosomes')">Ribosomes<span class="keyword-icon">🔊</span> & Rough ER:</strong> Site of <strong class="speak-keyword bg-indigo-100 px-1 rounded text-indigo-700" onclick="speakWord('protein synthesis')">protein synthesis<span class="keyword-icon">🔊</span></strong>. Ribosomes attach to the wall of Endoplasmic Reticulum.</li>
+                    </ul>
+
+                    <h4 class="font-bold text-green-700 text-md mb-2">Plant Cell ONLY 🌿</h4>
+                    <ul class="text-sm space-y-2 mb-4 bg-green-50 p-3 rounded-xl border border-green-200">
+                        <li><strong class="speak-keyword bg-green-200 px-1 rounded text-green-900" onclick="speakWord('Large Central Sap Vacuole')">Large Central Sap Vacuole<span class="keyword-icon">🔊</span>:</strong> Space surrounded by membrane; acts as sugar/water store. (Animals have small vacuoles).</li>
+                        <li><strong class="speak-keyword bg-green-200 px-1 rounded text-green-900" onclick="speakWord('Cell Wall')">Cell Wall<span class="keyword-icon">🔊</span>:</strong> Rigid structure made of <strong class="speak-keyword bg-green-100 px-1 rounded text-green-700" onclick="speakWord('cellulose')">cellulose<span class="keyword-icon">🔊</span></strong>. <strong class="speak-keyword bg-green-100 px-1 rounded text-green-700" onclick="speakWord('Fully freely permeable')">Fully freely permeable<span class="keyword-icon">🔊</span></strong>. Supports/protects, prevents bursting, maintains turgor pressure.</li>
+                        <li><strong class="speak-keyword bg-green-200 px-1 rounded text-green-900" onclick="speakWord('Chloroplasts')">Chloroplasts<span class="keyword-icon">🔊</span>:</strong> Contain chlorophyll pigments to trap sunlight for photosynthesis. Stores starch granules.</li>
+                    </ul>
                 </div>
 
             </div>
@@ -433,17 +480,44 @@
         let score = 0;
         let currentQuestions = [];
 
-        const synth = window.speechSynthesis;
+        const synth = window.speechSynthesis || null;
         let voices = [];
 
         // Try to load voices
         function loadVoices() {
-            voices = synth.getVoices();
+            if (synth) {
+                voices = synth.getVoices();
+            }
         }
         
-        loadVoices();
-        if (synth.onvoiceschanged !== undefined) {
-            synth.onvoiceschanged = loadVoices;
+        if (synth) {
+            loadVoices();
+            if (synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = loadVoices;
+            }
+        }
+
+        function speakWord(word) {
+            if (!synth) return;
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            const utterance = new SpeechSynthesisUtterance(word);
+            
+            const preferredVoices = voices.filter(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Google UK English Female') || v.name.includes('Victoria')));
+            
+            if (preferredVoices.length > 0) {
+                utterance.voice = preferredVoices[0];
+            } else if (voices.length > 0) {
+                 const engVoices = voices.filter(v => v.lang.includes('en'));
+                 if(engVoices.length > 0) {
+                     utterance.voice = engVoices[0];
+                 }
+            }
+
+            utterance.rate = 0.85; // Slightly slower for single words
+            utterance.pitch = 1.1; // Slightly higher, cute pitch
+            synth.speak(utterance);
         }
 
         // DOM Elements
@@ -467,11 +541,11 @@
         function startModule(index) {
             currentModuleIndex = index;
             // Copy and shuffle questions for this module
-            currentQuestions = [...modules[index]].sort(() => Math.random() - 0.5);
+            currentQuestions = modules[index].slice().sort(() => Math.random() - 0.5);
             currentQuestionIndex = 0;
             score = 0;
             
-            synth.cancel();
+            if (synth) synth.cancel();
 
             document.getElementById('score-display').innerText = score;
             showScreen('game-screen');
@@ -508,14 +582,15 @@
         }
 
         function speakQuestion() {
+            if (!synth) return;
             if (synth.speaking) {
                 synth.cancel(); // Stop if already speaking
             }
             
             const currentQ = currentQuestions[currentQuestionIndex];
             
-            // Remove emojis before speaking to make it sound better
-            const textToSpeak = currentQ.q.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+            // Simplified to avoid Regex SyntaxErrors on some older browsers
+            const textToSpeak = currentQ.q;
             
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             
@@ -542,7 +617,7 @@
             const currentQ = currentQuestions[currentQuestionIndex];
             const isCorrect = selectedIndex === currentQ.a;
             
-            synth.cancel();
+            if (synth) synth.cancel();
 
             if (isCorrect) {
                 score++;
@@ -576,7 +651,7 @@
             modalContentBox.classList.remove('scale-100');
             modalContentBox.classList.add('scale-90');
             
-            synth.cancel();
+            if (synth) synth.cancel();
 
             setTimeout(() => {
                 modal.classList.add('hidden');
