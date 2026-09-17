@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧬 Living Things | Cambridge Primary Science</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: { sans: ['Nunito', 'sans-serif'] },
+        colors: {
+          brand: { 50: '#f0fdf4', 100: '#dcfce7', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a' },
+          accent: { 400: '#f472b6', 500: '#ec4899', 600: '#db2777' }
+        },
+        animation: {
+          'bounce-slow': 'bounce 3s infinite',
+          'pulse-red-dot': 'pulseRedDot 1.5s infinite',
+          'slide-up': 'slideUp 0.5s ease-out forwards',
+          'wiggle': 'wiggle 1s ease-in-out infinite'
+        },
+        keyframes: {
+          pulseRedDot: {
+            '0%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)' },
+            '70%': { boxShadow: '0 0 0 15px rgba(239, 68, 68, 0)' },
+            '100%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' }
+          },
+          slideUp: {
+            '0%': { opacity: 0, transform: 'translateY(20px)' },
+            '100%': { opacity: 1, transform: 'translateY(0)' }
+          },
+          wiggle: {
+            '0%, 100%': { transform: 'rotate(-3deg)' },
+            '50%': { transform: 'rotate(3deg)' },
+          }
+        }
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/nunito@5.0.0/index.css">
+
+<style>
+  * { cursor: none !important; font-family: 'Nunito', sans-serif; }
+  body { transition: background-color 0.3s ease, color 0.3s ease; }
+  
+  /* Animated Cursor */
+  .red-dot-cursor {
+    position: fixed; top: 0; left: 0; width: 16px; height: 16px;
+    background-color: #ef4444; border-radius: 50%;
+    pointer-events: none; z-index: 999999;
+    transform: translate(-50%, -50%);
+    animation: pulse-red-dot 1.5s infinite;
+  }
+
+  /* Tab Management */
+  .tab-section { display: none; opacity: 0; transition: opacity 0.4s ease; }
+  .tab-section.active { display: block; opacity: 1; }
+  
+  /* Interactive Elements */
+  .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+  
+  /* Quiz Styling */
+  .quiz-option { border: 2px solid transparent; transition: all 0.2s; }
+  .quiz-option:hover { border-color: #4ade80; background-color: rgba(74, 222, 128, 0.1); }
+  .quiz-option.selected { border-color: #22c55e; background-color: rgba(34, 197, 94, 0.15); font-weight: bold; }
+  .quiz-option.correct { border-color: #22c55e; background-color: #dcfce7; }
+  .quiz-option.wrong { border-color: #ef4444; background-color: #fee2e2; }
+
+  /* Keywords Flashcard */
+  .flashcard { perspective: 1000px; }
+  .flashcard-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard:hover .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back { backface-visibility: hidden; position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .flashcard-back { transform: rotateY(180deg); }
+
+  /* Glassmorphism */
+  .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); }
+  .dark .glass { background: rgba(30, 41, 59, 0.85); }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200 min-h-screen pb-20">
+
+  <!-- Custom Cursor -->
+  <div class="red-dot-cursor" id="customCursor"></div>
+
+  <nav class="glass sticky top-0 z-50 border-b border-slate-200 dark:border-slate-700">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-xl shadow-lg animate-wiggle">🦖</div>
+        <span class="font-bold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-500 to-blue-500">Science Explorer</span>
+      </div>
+      
+      <div class="flex space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-full overflow-x-auto">
+        <button onclick="switchTab('lessons')" id="tab-lessons" class="tab-btn active bg-white dark:bg-slate-700 text-brand-600 dark:text-brand-400 shadow-sm px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap">
+          📚 Lessons
+        </button>
+        <button onclick="switchTab('keywords')" id="tab-keywords" class="tab-btn text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap">
+          ⚔️ Keyword Battle
+        </button>
+        <button onclick="switchTab('quizzes')" id="tab-quizzes" class="tab-btn text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap">
+          📝 Quizzes
+        </button>
+      </div>
+
+      <button onclick="toggleTheme()" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-600">
+        <span class="block dark:hidden text-lg">🌙</span>
+        <span class="hidden dark:block text-lg">☀️</span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    
+    <!-- 1. LESSONS TAB -->
+    <section id="lessons-view" class="tab-section active">
+      <div class="text-center mb-10 animate-slide-up">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Chapter 1: Living Things</h1>
+        <p class="text-slate-600 dark:text-slate-400 text-lg">Review your lesson summaries and key concepts below.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6" id="lessons-container">
+        <!-- Lessons will be injected by JavaScript -->
+      </div>
+    </section>
+
+    <section id="keywords-view" class="tab-section">
+      <div class="text-center mb-8 animate-slide-up">
+        <h1 class="text-4xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-accent-500 to-purple-500">⚔️ Keyword Battle</h1>
+        <p class="text-slate-600 dark:text-slate-400">Master 5 words a day! Hover to reveal, click the speaker to listen.</p>
+      </div>
+
+      <div class="max-w-4xl mx-auto bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-slate-700 animate-slide-up">
+        <!-- Day Selector -->
+        <div class="flex justify-center gap-4 mb-8">
+          <button onclick="loadKeywords(1)" id="btn-day-1" class="day-btn bg-accent-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:scale-105 transition-transform">Day 1</button>
+          <button onclick="loadKeywords(2)" id="btn-day-2" class="day-btn bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-6 py-2 rounded-full font-bold hover:scale-105 transition-transform">Day 2</button>
+          <button onclick="loadKeywords(3)" id="btn-day-3" class="day-btn bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-6 py-2 rounded-full font-bold hover:scale-105 transition-transform">Day 3</button>
+        </div>
+
+        <!-- Flashcards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8" id="flashcards-container">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Mini Practice Panel -->
+        <div class="mt-8 pt-8 border-t border-slate-200 dark:border-slate-700">
+          <h3 class="text-2xl font-bold mb-4 text-center">🎯 Daily Practice Match</h3>
+          <p class="text-center text-sm text-slate-500 mb-6">Select the correct keyword to complete the sentence.</p>
+          <div id="practice-container" class="space-y-4 max-w-2xl mx-auto">
+             <!-- Practice questions injected here -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quizzes-view" class="tab-section">
+      <div class="text-center mb-8 animate-slide-up">
+        <h1 class="text-4xl font-extrabold mb-4 text-brand-500">📝 IGCSE Primary Assessment</h1>
+        <p class="text-slate-600 dark:text-slate-400">Test your knowledge. Your scores will be sent to your teacher's cloud report.</p>
+      </div>
+
+      <div class="max-w-3xl mx-auto">
+        <!-- Student Info Form for Report -->
+        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-6 mb-8 border border-blue-200 dark:border-blue-800 animate-slide-up">
+          <h3 class="font-bold text-lg mb-4 text-blue-800 dark:text-blue-300">👤 Student Details (Required for Report)</h3>
+          <div class="grid sm:grid-cols-2 gap-4">
+            <input type="text" id="studentName" placeholder="Your Full Name" class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-brand-500 outline-none">
+            <input type="text" id="studentID" placeholder="Student ID (e.g. STU-123)" class="w-full px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-700 focus:ring-2 focus:ring-brand-500 outline-none">
+          </div>
+        </div>
+
+        <!-- The Quiz Container -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 shadow-lg border border-slate-200 dark:border-slate-700 animate-slide-up delay-100" id="assessment-container">
+          <!-- Quiz Questions Injected Here -->
+        </div>
+
+        <!-- Submit to Cloud Area -->
+        <div class="mt-8 text-center hidden" id="submission-area">
+          <h3 class="text-2xl font-bold mb-2">Quiz Complete! 🎉</h3>
+          <p class="text-lg mb-6">Your Score: <span id="finalScoreDisplay" class="font-bold text-brand-500 text-2xl"></span></p>
+          
+          <button onclick="submitToSheetMonkey()" id="submitReportBtn" class="bg-gradient-to-r from-blue-500 to-brand-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2 mx-auto">
+            <span>☁️ Send Report to Teacher</span>
+          </button>
+          
+          <!-- Sheet Monkey Instructions for Teacher -->
+          <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded-xl text-sm text-left border border-yellow-200 dark:border-yellow-700">
+            <strong>👨‍🏫 Teacher Note (Sheet Monkey Setup):</strong><br>
+            To receive this data to <code>sarawakeell@gmail.com</code>:
+            <ol class="list-decimal ml-5 mt-2 space-y-1">
+              <li>Go to <a href="https://sheetmonkey.io" target="_blank" class="underline font-bold">SheetMonkey.io</a> and link your Google Sheet.</li>
+              <li>Get your "Form Action URL".</li>
+              <li>In the HTML code below, find the JavaScript function <code>submitToSheetMonkey()</code> and replace <code>'YOUR_SHEET_MONKEY_URL_HERE'</code> with your actual link.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // --- Custom Cursor ---
+    const customCursor = document.getElementById('customCursor');
+    document.addEventListener('mousemove', (e) => {
+      customCursor.style.left = e.clientX + 'px';
+      customCursor.style.top = e.clientY + 'px';
+    });
+
+    // --- Tab & Theme Management ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-white', 'dark:bg-slate-700', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
+        btn.classList.add('text-slate-600', 'dark:text-slate-300');
+      });
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.classList.remove('text-slate-600', 'dark:text-slate-300');
+      activeBtn.classList.add('active', 'bg-white', 'dark:bg-slate-700', 'text-brand-600', 'dark:text-brand-400', 'shadow-sm');
+
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+      setTimeout(() => document.getElementById(`${tabId}-view`).classList.add('active'), 50);
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    // --- DATA: Lessons (Chapter 1) ---
+    const lessonsData = [
+      {
+        id: "1.1", title: "Bones and Skeletons", icon: "🦴", color: "from-pink-400 to-rose-400",
+        summary: "Our skeleton is a strong frame of 206 bones. It includes the skull, jaw, rib cage, spine, hip, and limb bones. Models help us study things we can't see.",
+        checklist: ["Name bones in our body", "Make a skeleton model"]
+      },
+      {
+        id: "1.2", title: "Why we need a skeleton", icon: "🛡️", color: "from-blue-400 to-cyan-400",
+        summary: "The skeleton has 3 main functions: <b>Protect</b> (skull protects brain), <b>Give Shape</b> (supports body), and <b>Allow Movement</b> (joined to muscles).",
+        checklist: ["Describe functions of skeleton", "Measure bone length"]
+      },
+      {
+        id: "1.3", title: "Skeletons and Movement", icon: "🏃", color: "from-green-400 to-emerald-400",
+        summary: "Muscles pull on bones to make us move. They work in pairs: when one <b>contracts</b> (gets shorter), the other <b>relaxes</b>. Movement keeps us healthy!",
+        checklist: ["Explain how muscles work", "Observe muscle changes"]
+      },
+      {
+        id: "1.4", title: "Different kinds of skeletons", icon: "🦀", color: "from-orange-400 to-amber-400",
+        summary: "<b>Vertebrates</b> have a backbone (e.g. fish, birds, mammals). <b>Invertebrates</b> have no backbone. Some invertebrates have hard outside shells called <b>exoskeletons</b>.",
+        checklist: ["Identify vertebrates & invertebrates", "Use an identification key"]
+      },
+      {
+        id: "1.5", title: "Medicines & Diseases", icon: "💊", color: "from-purple-400 to-indigo-400",
+        summary: "Medicines treat or prevent illness. <b>Vaccinations</b> are injections that stop infectious diseases caused by germs. Always take medicines safely with adult supervision.",
+        checklist: ["Why we take medicines", "How vaccines prevent disease"]
+      }
+    ];
+
+    function renderLessons() {
+      const container = document.getElementById('lessons-container');
+      container.innerHTML = lessonsData.map(lesson => `
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 hover-lift">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br ${lesson.color} flex items-center justify-center text-2xl text-white shadow-inner">
+              ${lesson.icon}
+            </div>
+            <div>
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Section ${lesson.id}</span>
+              <h3 class="text-xl font-bold text-slate-800 dark:text-white">${lesson.title}</h3>
+            </div>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 text-sm mb-4 leading-relaxed">${lesson.summary}</p>
+          <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl">
+            <p class="text-xs font-bold text-slate-500 mb-2">Look what I can do:</p>
+            ${lesson.checklist.map(item => `<div class="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300"><span class="text-brand-500">✓</span> ${item}</div>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- DATA: Keywords Battle ---
+    const keywordsData = {
+      1: [
+        { word: "Skeleton", meaning: "A strong frame of bones inside the body.", sentence: "The dinosaur ___ was found in the rocks." },
+        { word: "Bone", meaning: "Hard, strong parts that make up a skeleton.", sentence: "The dog chewed on a large ___." },
+        { word: "Skull", meaning: "The bones of the head that protect the brain.", sentence: "Wear a helmet to protect your ___." },
+        { word: "Spine", meaning: "The backbone made of many small bones.", sentence: "Stand up straight to help your ___." },
+        { word: "Model", meaning: "A copy of something used to study how it works.", sentence: "We built a ___ of the solar system." }
+      ],
+      2: [
+        { word: "Organ", meaning: "Parts inside the body that do important jobs (like the heart).", sentence: "The heart is an important ___." },
+        { word: "Protect", meaning: "To keep safe from harm.", sentence: "The rib cage helps to ___ the lungs." },
+        { word: "Muscle", meaning: "Body parts joined to bones that help us move.", sentence: "You use a ___ in your leg to kick the ball." },
+        { word: "Contract", meaning: "To get shorter and pull on a bone.", sentence: "When you lift a book, your arm muscles ___." },
+        { word: "Relax", meaning: "To get longer and rest.", sentence: "When you sleep, your muscles ___." }
+      ],
+      3: [
+        { word: "Vertebrate", meaning: "An animal with a backbone.", sentence: "A bird is a ___ because it has a spine." },
+        { word: "Invertebrate", meaning: "An animal without a backbone.", sentence: "A worm is a soft-bodied ___." },
+        { word: "Exoskeleton", meaning: "A hard outer shell on some invertebrates.", sentence: "A crab has a hard ___ to protect it." },
+        { word: "Medicine", meaning: "Substances taken to treat or prevent illness.", sentence: "The doctor gave me ___ for my cough." },
+        { word: "Vaccination", meaning: "An injection that prevents you from getting an infectious disease.", sentence: "The baby got a ___ to stay healthy." }
+      ]
+    };
+
+    function speakWord(word) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(word);
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("Text-to-speech not supported in this browser.");
+      }
+    }
+
+    function loadKeywords(day) {
+      // Update Buttons
+      document.querySelectorAll('.day-btn').forEach(btn => {
+        btn.classList.remove('bg-accent-500', 'text-white', 'shadow-md');
+        btn.classList.add('bg-slate-200', 'dark:bg-slate-700', 'text-slate-700', 'dark:text-slate-300');
+      });
+      const activeBtn = document.getElementById(`btn-day-${day}`);
+      activeBtn.classList.remove('bg-slate-200', 'dark:bg-slate-700', 'text-slate-700', 'dark:text-slate-300');
+      activeBtn.classList.add('bg-accent-500', 'text-white', 'shadow-md');
+
+      // Render Cards
+      const container = document.getElementById('flashcards-container');
+      const words = keywordsData[day];
+      container.innerHTML = words.map(item => `
+        <div class="flashcard w-full h-40 cursor-pointer">
+          <div class="flashcard-inner w-full h-full relative">
+            <!-- Front -->
+            <div class="flashcard-front bg-slate-50 dark:bg-slate-700 rounded-2xl flex flex-col items-center justify-center border-2 border-slate-200 dark:border-slate-600 shadow-sm">
+              <h3 class="text-2xl font-bold text-accent-600 dark:text-accent-400">${item.word}</h3>
+              <p class="text-xs text-slate-400 mt-2">Hover for meaning</p>
+              <button onclick="event.stopPropagation(); speakWord('${item.word}')" class="absolute top-3 right-3 p-2 bg-white dark:bg-slate-800 rounded-full shadow hover:scale-110 transition-transform">
+                🔊
+              </button>
+            </div>
+            <!-- Back -->
+            <div class="flashcard-back bg-accent-50 dark:bg-accent-900/40 rounded-2xl flex items-center justify-center p-4 border-2 border-accent-200 dark:border-accent-700 text-center">
+              <p class="text-slate-800 dark:text-slate-200 font-medium">${item.meaning}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Practice Panel
+      const practiceContainer = document.getElementById('practice-container');
+      practiceContainer.innerHTML = words.map((item, index) => {
+        // Create random options including the correct word
+        let options = [item.word];
+        while(options.length < 3) {
+           let randomDay = Math.floor(Math.random() * 3) + 1;
+           let randomWord = keywordsData[randomDay][Math.floor(Math.random() * 5)].word;
+           if(!options.includes(randomWord)) options.push(randomWord);
+        }
+        options.sort(() => Math.random() - 0.5); // shuffle
+
+        return `
+        <div class="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
+          <p class="mb-3 text-slate-700 dark:text-slate-300 font-medium">${index + 1}. ${item.sentence.replace('___', '<span class="border-b-2 border-slate-400 w-16 inline-block text-center text-accent-500 font-bold px-2">?</span>')}</p>
+          <div class="flex gap-2">
+            ${options.map(opt => `<button onclick="checkPractice(this, '${opt === item.word}')" class="px-3 py-1 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg text-sm hover:bg-accent-50 dark:hover:bg-accent-900/50 transition-colors">${opt}</button>`).join('')}
+          </div>
+        </div>
+        `;
+      }).join('');
+    }
+
+    function checkPractice(btn, isCorrect) {
+      if (isCorrect === 'true') {
+        btn.classList.add('bg-green-100', 'border-green-500', 'text-green-700', 'dark:bg-green-900/50', 'dark:text-green-400');
+        btn.innerHTML += ' ✓';
+      } else {
+        btn.classList.add('bg-red-100', 'border-red-500', 'text-red-700', 'dark:bg-red-900/50', 'dark:text-red-400');
+      }
+      btn.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
+    }
+
+
+    // --- DATA: IGCSE Primary Assessment Quizzes ---
+    const quizQuestions = [
+      {
+        q: "How many bones are in the adult human skeleton?",
+        options: ["106", "206", "306", "406"],
+        answer: 1 // index 1 is "206"
+      },
+      {
+        q: "Which organ does the skull protect?",
+        options: ["Heart", "Lungs", "Brain", "Stomach"],
+        answer: 2
+      },
+      {
+        q: "True or False: Muscles work in pairs to move bones.",
+        options: ["True", "False"],
+        answer: 0
+      },
+      {
+        q: "When a muscle gets shorter and pulls on a bone, we say it...",
+        options: ["Relaxes", "Stretches", "Contracts", "Breaks"],
+        answer: 2
+      },
+      {
+        q: "An animal without a backbone is called an...",
+        options: ["Vertebrate", "Mammal", "Amphibian", "Invertebrate"],
+        answer: 3
+      },
+      {
+        q: "What is the hard outer shell found on a crab or insect called?",
+        options: ["Spine", "Exoskeleton", "Rib cage", "Scales"],
+        answer: 1
+      },
+      {
+        q: "True or False: Vaccinations are used to prevent some infectious diseases.",
+        options: ["True", "False"],
+        answer: 0
+      }
+    ];
+
+    let userAnswers = [];
+
+    function renderQuiz() {
+      const container = document.getElementById('assessment-container');
+      userAnswers = new Array(quizQuestions.length).fill(null);
+      
+      let html = `<h2 class="text-2xl font-bold mb-6 border-b pb-2">Unit 1 Assessment</h2>`;
+      
+      quizQuestions.forEach((q, index) => {
+        html += `
+          <div class="mb-6 quiz-q-block" data-qindex="${index}">
+            <p class="font-bold text-lg mb-3">${index + 1}. ${q.q}</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              ${q.options.map((opt, optIndex) => `
+                <div class="quiz-option p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 cursor-pointer" onclick="selectOption(${index}, ${optIndex}, this)">
+                  <span class="font-bold mr-2 text-slate-500">${String.fromCharCode(65 + optIndex)}.</span> ${opt}
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      html += `<button onclick="gradeQuiz()" class="mt-4 w-full bg-brand-500 text-white font-bold py-3 rounded-xl hover:bg-brand-600 transition-colors">Submit Answers</button>`;
+      container.innerHTML = html;
+    }
+
+    function selectOption(qIndex, optIndex, el) {
+      userAnswers[qIndex] = optIndex;
+      // UI Update
+      const block = el.closest('.quiz-q-block');
+      block.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected', 'border-brand-500', 'bg-brand-50'));
+      el.classList.add('selected', 'border-brand-500', 'bg-brand-50');
+    }
+
+    let finalScorePercentage = 0;
+
+    function gradeQuiz() {
+      // Validate inputs
+      const studentName = document.getElementById('studentName').value;
+      const studentID = document.getElementById('studentID').value;
+      
+      if(!studentName || !studentID) {
+        alert("Please enter your Student Name and ID at the top of the quiz before submitting.");
+        document.getElementById('studentName').focus();
+        return;
+      }
+
+      if(userAnswers.includes(null)) {
+        alert("Please answer all questions before submitting.");
+        return;
+      }
+
+      let score = 0;
+      const blocks = document.querySelectorAll('.quiz-q-block');
+      
+      quizQuestions.forEach((q, index) => {
+        const block = blocks[index];
+        const options = block.querySelectorAll('.quiz-option');
+        
+        // Remove pointer events so they can't change answer
+        options.forEach(opt => opt.style.pointerEvents = 'none');
+
+        if (userAnswers[index] === q.answer) {
+          score++;
+          options[userAnswers[index]].classList.add('correct');
+        } else {
+          options[userAnswers[index]].classList.add('wrong');
+          options[q.answer].classList.add('correct'); // Show actual answer
+        }
+      });
+
+      finalScorePercentage = Math.round((score / quizQuestions.length) * 100);
+      
+      // Hide quiz, show submission area
+      document.getElementById('assessment-container').style.display = 'none';
+      const submissionArea = document.getElementById('submission-area');
+      submissionArea.classList.remove('hidden');
+      document.getElementById('finalScoreDisplay').textContent = `${finalScorePercentage}% (${score}/${quizQuestions.length})`;
+    }
+
+    // --- STREAMING_CHUNK: Cloud Data Submission (Sheet Monkey) ---
+    async function submitToSheetMonkey() {
+      const studentName = document.getElementById('studentName').value;
+      const studentID = document.getElementById('studentID').value;
+      const btn = document.getElementById('submitReportBtn');
+      
+      // TEACHER INSTRUCTIONS: Paste your SheetMonkey Action URL here!
+      const SHEET_MONKEY_URL = 'YOUR_SHEET_MONKEY_URL_HERE'; 
+
+      // Data payload mapping to your Google Sheet Columns
+      const reportData = {
+        Timestamp: new Date().toLocaleString(),
+        StudentName: studentName,
+        StudentID: studentID,
+        Unit: "Unit 1: Living Things",
+        ScorePercentage: `${finalScorePercentage}%`,
+        TeacherEmailAlert: "sarawakeell@gmail.com"
+      };
+
+      btn.innerHTML = "⏳ Sending to Cloud...";
+      btn.disabled = true;
+
+      // Note: If you leave 'YOUR_SHEET_MONKEY_URL_HERE', it won't actually send anywhere in this demo.
+      // But the logic below is exact for production use.
+      try {
+        if(SHEET_MONKEY_URL !== 'YOUR_SHEET_MONKEY_URL_HERE') {
+          await fetch(SHEET_MONKEY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(reportData)
+          });
+        } else {
+          // Simulate network delay for demo
+          await new Promise(r => setTimeout(r, 1500));
+        }
+
+        btn.innerHTML = "✅ Report Sent Successfully!";
+        btn.classList.remove('from-blue-500', 'to-brand-500');
+        btn.classList.add('bg-green-500');
+        
+      } catch (error) {
+        console.error("Error submitting to Sheet Monkey:", error);
+        btn.innerHTML = "❌ Error Sending. Try Again.";
+        btn.disabled = false;
+      }
+    }
+
+    // Initialize Page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check system theme
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+      }
+      renderLessons();
+      loadKeywords(1);
+      renderQuiz();
+    });
+
+  </script>
+</body>
+</html>

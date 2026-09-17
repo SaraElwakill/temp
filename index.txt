@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScienceHub - Cambridge Primary Science</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  @import url('https://cdn.jsdelivr.net/npm/fontsource-inter@5.0.0/index.css');
+  
+  :root {
+    --primary: #0891b2;
+    --secondary: #0e7490;
+    --accent: #f59e0b;
+    --bg: #f0f9ff;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+  }
+
+  [data-theme="dark"] {
+    --primary: #22d3ee;
+    --secondary: #06b6d4;
+    --accent: #fbbf24;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f1f5f9;
+    --text-light: #94a3b8;
+    --border: #334155;
+  }
+
+  [data-theme="girls"] {
+    --primary: #ec4899;
+    --secondary: #db2777;
+    --accent: #f472b6;
+    --bg: #fdf2f8;
+    --card: #ffffff;
+    --text: #831843;
+    --text-light: #be185d;
+    --border: #fbcfe8;
+  }
+
+  [data-theme="boys"] {
+    --primary: #2563eb;
+    --secondary: #1d4ed8;
+    --accent: #3b82f6;
+    --bg: #eff6ff;
+    --card: #ffffff;
+    --text: #1e3a8a;
+    --text-light: #3b82f6;
+    --border: #bfdbfe;
+  }
+
+  [data-theme="games"] {
+    --primary: #a855f7;
+    --secondary: #7c3aed;
+    --accent: #22c55e;
+    --bg: #0a0a0a;
+    --card: #1a1a2e;
+    --text: #e0e0e0;
+    --text-light: #a0a0a0;
+    --border: #333355;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: all 0.3s ease;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--secondary); transform: translateY(-1px); }
+
+  .btn-accent {
+    background: var(--accent);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+
+  .sidebar-item {
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar-item:hover { background: var(--border); }
+  .sidebar-item.active { background: var(--primary); color: white; }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: width 0.5s ease;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .keyword-tag {
+    background: var(--primary);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    display: inline-block;
+    margin: 3px;
+  }
+
+  .quiz-option {
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin: 8px 0;
+  }
+  .quiz-option:hover { border-color: var(--primary); background: var(--bg); }
+  .quiz-option.correct { border-color: var(--success); background: #d1fae5; color: #065f46; }
+  .quiz-option.wrong { border-color: var(--danger); background: #fee2e2; color: #991b1b; }
+  .quiz-option.selected { border-color: var(--primary); background: var(--bg); }
+
+  [data-theme="games"] .quiz-option.correct { background: #064e3b; color: #6ee7b7; }
+  [data-theme="games"] .quiz-option.wrong { background: #7f1d1d; color: #fca5a5; }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal.active { display: flex; }
+
+  .theme-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .theme-btn:hover { transform: scale(1.1); }
+  .theme-btn.active { border-color: var(--text); transform: scale(1.15); }
+
+  .xp-bar {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    color: #1e293b;
+    font-weight: bold;
+  }
+
+  .level-badge {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .pulse { animation: pulse 2s infinite; }
+
+  .scrollbar::-webkit-scrollbar { width: 6px; }
+  .scrollbar::-webkit-scrollbar-track { background: var(--bg); }
+  .scrollbar::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+  .tab-btn {
+    padding: 8px 16px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: var(--bg);
+    color: var(--text-light);
+    font-weight: 600;
+  }
+  .tab-btn.active {
+    background: var(--card);
+    color: var(--primary);
+    border-bottom: 2px solid var(--card);
+  }
+
+  .report-card {
+    background: var(--card);
+    border: 2px solid var(--primary);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .star { color: #fbbf24; font-size: 24px; }
+</style>
+</head>
+<body data-theme="light">
+
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 card border-b-2" style="background: var(--card); border-color: var(--primary);">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-3">
+    <div class="flex items-center gap-3">
+      <div class="text-3xl">🔬</div>
+      <div>
+        <h1 class="text-xl font-bold" style="color: var(--primary);">ScienceHub</h1>
+        <p class="text-xs" style="color: var(--text-light);">Cambridge Primary Science Y4</p>
+      </div>
+    </div>
+
+    <!-- User Info & XP -->
+    <div class="flex items-center gap-4 flex-wrap">
+      <div class="flex items-center gap-2">
+        <div class="level-badge" id="userLevel">Level 1</div>
+        <div class="text-sm">
+          <div class="font-bold" id="userName">Student</div>
+          <div class="text-xs" style="color: var(--text-light);"><span id="userXP">0</span> XP</div>
+        </div>
+      </div>
+      <div class="w-32">
+        <div class="progress-bar">
+          <div class="progress-fill xp-bar" id="xpBar" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme Switcher -->
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-semibold" style="color: var(--text-light);">Theme:</span>
+      <button class="theme-btn active" style="background: #f0f9ff;" data-theme-set="light" title="Light"></button>
+      <button class="theme-btn" style="background: #0f172a;" data-theme-set="dark" title="Dark"></button>
+      <button class="theme-btn" style="background: #fdf2f8;" data-theme-set="girls" title="Girls"></button>
+      <button class="theme-btn" style="background: #eff6ff;" data-theme-set="boys" title="Boys"></button>
+      <button class="theme-btn" style="background: #0a0a0a;" data-theme-set="games" title="Games"></button>
+    </div>
+
+    <!-- Role Switcher -->
+    <select id="roleSwitcher" class="px-3 py-2 rounded-lg border-2 font-semibold" style="background: var(--card); color: var(--text); border-color: var(--primary);">
+      <option value="student">👨‍ Student</option>
+      <option value="teacher">👩‍ Teacher</option>
+      <option value="parent">👨‍👩‍ Parent</option>
+    </select>
+  </div>
+</header>
+
+<div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-12 gap-6">
+
+  <!-- Sidebar -->
+  <aside class="col-span-12 lg:col-span-3">
+    <div class="card p-4 sticky top-24">
+      <h2 class="font-bold text-lg mb-4" style="color: var(--primary);">📚 Syllabus</h2>
+      <div class="space-y-2 max-h-[70vh] overflow-y-auto scrollbar" id="syllabusList">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="mt-6 pt-4 border-t-2" style="border-color: var(--border);">
+        <h3 class="font-bold mb-2" style="color: var(--primary);">📊 Your Progress</h3>
+        <div class="progress-bar mb-2">
+          <div class="progress-fill" id="totalProgress" style="width: 0%"></div>
+        </div>
+        <p class="text-sm" style="color: var(--text-light);"><span id="completedLessons">0</span> / <span id="totalLessons">0</span> lessons</p>
+      </div>
+
+      <div class="mt-4 space-y-2">
+        <button class="btn-primary w-full" onclick="showReport()">📋 View Report</button>
+        <button class="btn-accent w-full" onclick="resetProgress()">🔄 Reset Progress</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="col-span-12 lg:col-span-9">
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-4 flex-wrap">
+      <button class="tab-btn active" data-tab="lesson">📖 Lesson</button>
+      <button class="tab-btn" data-tab="keywords"> Keywords</button>
+      <button class="tab-btn" data-tab="quiz">🎯 Quiz</button>
+      <button class="tab-btn" data-tab="activity">🧪 Activity</button>
+    </div>
+
+    <div class="card p-6 min-h-[500px]" id="mainContent">
+      <!-- Content populated by JS -->
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-between mt-4">
+      <button class="btn-primary" id="prevBtn" onclick="navigateLesson(-1)">← Previous</button>
+      <button class="btn-primary" id="markCompleteBtn" onclick="markLessonComplete()">✓ Mark Complete</button>
+      <button class="btn-primary" id="nextBtn" onclick="navigateLesson(1)">Next →</button>
+    </div>
+  </main>
+</div>
+
+<!-- Report Modal -->
+<div class="modal" id="reportModal">
+  <div class="card p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto scrollbar">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold" style="color: var(--primary);" id="reportTitle">📊 Progress Report</h2>
+      <button onclick="closeModal('reportModal')" class="text-2xl" style="color: var(--text);">✕</button>
+    </div>
+    <div id="reportContent">
+      <!-- Populated by JS -->
+    </div>
+    <div class="mt-6 flex gap-3 flex-wrap">
+      <button class="btn-primary" onclick="printReport()">🖨️ Print Report</button>
+      <button class="btn-accent" onclick="closeModal('reportModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Achievement Modal -->
+<div class="modal" id="achievementModal">
+  <div class="card p-8 max-w-md w-full mx-4 text-center">
+    <div class="text-6xl mb-4 pulse" id="achievementIcon">🏆</div>
+    <h2 class="text-2xl font-bold mb-2" style="color: var(--primary);" id="achievementTitle">Achievement Unlocked!</h2>
+    <p class="mb-4" id="achievementDesc"></p>
+    <div class="text-3xl font-bold mb-4" style="color: var(--accent);" id="achievementXP">+50 XP</div>
+    <button class="btn-primary" onclick="closeModal('achievementModal')">Continue</button>
+  </div>
+</div>
+
+<script>
+// ============ SYLLABUS DATA ============
+const syllabus = [
+  {
+    id: 1,
+    title: "1. Living Things",
+    color: "#0891b2",
+    icon: "🌱",
+    lessons: [
+      {
+        id: "1.1",
+        title: "1.1 Bones and Skeletons",
+        content: `
+          <h2 class="text-2xl font-bold mb-4" style="color: var(--primary);">🦴 Bones and Skeletons</h2>
+          <div class="bg-blue-50 p-4 rounded-lg mb-4 border-l-4 border-blue-500">
+            <h3 class="font-bold mb-2">We are going to...</h3>
+            <ul class="list-disc pl-6 space-y-1">
+              <li>name some of the bones in our body</li>
+              <li>point out where some of the main bones are found in our body</li>
+              <li>make a model of a skeleton</li>
+              <li>think about how a model is different to the real thing</li>
+            </ul>
+          </div>
+          <h3 class="text-xl font-bold mt-6 mb-3">What is a skeleton?</h3>
+          <p class="mb-4">People and many animals have <strong>bones</strong> inside their bodies. These bones are joined together to form a skeleton. A skeleton is a strong <strong>frame</strong> that supports our body from the inside.</p>
+          <p class="mb-4">We know about animals, like dinosaurs, that lived very long ago from their skeletons.</p>
+          <h3 class="text-xl font-bold mt-6 mb-3">The human skeleton</h3>
+          <p class="mb-4">Our skeletons are made of <strong>206 bones</strong>. These bones are different sizes and shapes. You can feel your bones through your skin. Bones are hard and strong.</p>
+          <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
+            <h4 class="font-bold mb-2">🔍 Activity: Finding your bones</h4>
+            <ul class="list-disc pl-6 space-y-1">
+              <li>Feel your head. How many <strong>skull</strong> bones can you feel?</li>
+              <li>Push a finger on your chin - that's your <strong>jaw</strong> bone</li>
+              <li>Hold your hands on your chest - find your <strong>rib cage</strong></li>
+              <li>Feel your back - those bumps are your <strong>spine</strong></li>
+              <li>Put your hands on your <strong>hips</strong></li>
+            </ul>
+          </div>
+        `,
+        keywords: ["bones", "frame", "hip", "jaw", "model", "rib cage", "skeleton", "skull", "spine"],
+        quiz: [
+          { q: "How many bones are in the human skeleton?", options: ["106", "206", "306", "150"], correct: 1 },
+          { q: "What is a skeleton?", options: ["A muscle", "A strong frame that supports the body", "An organ", "A type of skin"], correct: 1 },
+          { q: "Which bone protects the brain?", options: ["Rib cage", "Spine", "Skull", "Hip"], correct: 2 }
+        ],
+        activity: "Make a model skeleton using drinking straws, bottle tops, and modelling clay. Label: skull, jaw, rib cage, spine, arm bones, leg bones."
+      },
+      {
+        id: "1.2",
+        title: "1.2 Why we need a skeleton",
+        content: `
+          <h2 class="text-2xl font-bold mb-4" style="color: var(--primary);">️ Why we need a skeleton</h2>
+          <div class="bg-blue-50 p-4 rounded-lg mb-4 border-l-4 border-blue-500">
+            <h3 class="font-bold mb-2">We are going to...</h3>
+            <ul class="list-disc pl-6 space-y-1">
+              <li>describe the main functions of the skeleton</li>
+              <li>measure the length of bones</li>
+              <li>think about why it is better to measure in standard units</li>
+              <li>record data in a table</li>
+            </ul>
+          </div>
+          <h3 class="text-xl font-bold mt-6 mb-3">Four main functions of the skeleton:</h3>
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div class="card p-4 border-l-4" style="border-color: #ef4444;">
+              <h4 class="font-bold text-red-600">🛡️ Skeletons protect</h4>
+              <p class="text-sm mt-2">The skull protects the brain. The rib cage protects the heart and lungs.</p>
+            </div>
+            <div class="card p-4 border-l-4" style="border-color: #10b981;">
+              <h4 class="font-bold text-green-600">📐 Skeletons give shape</h4>
+              <p class="text-sm mt-2">The skeleton forms a frame that supports the body and gives it shape.</p>
+            </div>
+            <div class="card p-4 border-l-4" style="border-color: #3b82f6;">
+              <h4 class="font-bold text-blue-600">🏃 Skeletons allow us to move</h4>
+              <p class="text-sm mt-2">Muscles joined to bones help us walk, run, and move.</p>
+            </div>
+            <div class="card p-4 border-l-4" style="border-color: #f59e0b;">
+              <h4 class="font-bold text-yellow-600">📈 Skeletons help us grow</h4>
+              <p class="text-sm mt-2">We grow because our skeleton grows. Adult skeletons stop growing.</p>
+            </div>
+          </div>
+        `,
+        keywords: ["function", "length", "muscles", "organs", "protect", "support"],
+        quiz: [
+          { q: "Which organ does the skull protect?", options: ["Heart", "Lungs", "Brain", "Stomach"], correct: 2 },
+          { q: "How many main functions does the skeleton have?", options: ["2", "3", "4", "5"], correct: 2 },
+          { q: "What helps bones move?", options: ["Skin", "Muscles", "Hair", "Blood"], correct: 1 }
+        ],
+        activity: "Measure the length of your upper arm bone, upper leg bone, and lower leg bone with a partner using a tape measure. Record in a table."
+      },
+      {
+        id: "1.3",
+        title: "1.3 Skeletons and movement",
+        content: `
+          <h2 class="text-2xl font-bold mb-4" style="color: var(--primary);">💪 Skeletons and movement</h2>
+          <h3 class="text-xl font-bold mt-4 mb-3">How muscles work</h3>
+          <p class="mb-4">Muscles pull on bones to make them move. Muscles work by getting shorter and longer.</p>
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div class="card p-4 bg-red-50 border-2 border-red-300">
+              <h4 class="font-bold text-red-700">🔴 Contract</h4>
+              <p class="text-sm">When muscles get shorter, they pull on bones. This is called <strong>contracting</strong>.</p>
+            </div>
+            <div class="card p-4 bg-green-50 border-2 border-green-300">
+              <h4 class="font-bold text-green-700">🟢 Relax</h4>
+              <p class="text-sm">When muscles get longer, they let you rest. This is called <strong>relaxing</strong>.</p>
+            </div>
+          </div>
+          <p class="mb-4"><strong>Muscles always work in pairs!</strong> One muscle contracts and pulls on the bone. The other muscle relaxes.</p>
+          <h3 class="text-xl font-bold mt-6 mb-3">Movement keeps us healthy</h3>
+          <ul class="list-disc pl-6 space-y-2">
+            <li>Makes your heart and lungs work better</li>
+            <li>Makes your muscles and bones stronger</li>
+            <li>Lets you stretch your body easily</li>
+            <li>Helps stop you from getting some illnesses</li>
+            <li>Helps you think better</li>
+            <li>Puts you in a good mood</li>
+          </ul>
+        `,
+        keywords: ["contract", "relax", "muscles", "movement", "health", "pairs"],
+        quiz: [
+          { q: "What happens when a muscle gets shorter?", options: ["It relaxes", "It contracts", "It breaks", "It grows"], correct: 1 },
+          { q: "How do muscles work?", options: ["Alone", "In pairs", "In groups of 3", "Only one at a time"], correct: 1 },
+          { q: "Which is NOT a benefit of movement?", options: ["Stronger bones", "Better mood", "Weaker heart", "Better thinking"], correct: 2 }
+        ],
+        activity: "Make a model of arm muscles using card, elastic bands, and a split pin. Show how muscles work in pairs."
+      },
+      {
+        id: "1.4",
+        title: "1.4 Different kinds of skeletons",
+        content: `
+          <h2 class="text-2xl font-bold mb-4" style="color: var(--primary);"> Different kinds of skeletons</h2>
+          <h3 class="text-xl font-bold mt-4 mb-3">Animals with bones - Vertebrates</h3>
+          <p class="mb-4">Animals with a backbone inside their bodies are called <strong>vertebrates</strong>. There are 5 groups:</p>
+          <div class="grid md:grid-cols-5 gap-2 mb-6">
+            <div class="card p-3 text-center text-sm"><div class="text-2xl">🐟</div><strong>Fish</strong><br><span class="text-xs">Scales, fins</span></div>
+            <div class="card p-3 text-center text-sm"><div class="text-2xl">🐸</div><strong>Amphibians</strong><br><span class="text-xs">Smooth wet skin</span></div>
+            <div class="card p-3 text-center text-sm"><div class="text-2xl"></div><strong>Reptiles</strong><br><span class="text-xs">Dry scales</span></div>
+            <div class="card p-3 text-center text-sm"><div class="text-2xl">🦜</div><strong>Birds</strong><br><span class="text-xs">Feathers, wings</span></div>
+            <div class="card p-3 text-center text-sm"><div class="text-2xl">🐯</div><strong>Mammals</strong><br><span class="text-xs">Hair/fur</span></div>
+          </div>
+          <h3 class="text-xl font-bold mt-4 mb-3">Animals without bones - Invertebrates</h3>
+          <p class="mb-4">Animals with no backbone are called <strong>invertebrates</strong>.</p>
+          <ul class="list-disc pl-6 space-y-2 mb-4">
+            <li>Some have an <strong>exoskeleton</strong> (hard outer shell) - like insects, crabs, beetles</li>
+            <li>Others have soft bodies - like worms, jellyfish</li>
+          </ul>
+        `,
+        keywords: ["exoskeleton", "identification key", "invertebrate", "vertebrate", "backbone"],
+        quiz: [
+          { q: "What is a vertebrate?", options: ["Animal without bones", "Animal with a backbone", "An insect", "A plant"], correct: 1 },
+          { q: "Which has an exoskeleton?", options: ["Dog", "Fish", "Crab", "Bird"], correct: 2 },
+          { q: "How many groups of vertebrates are there?", options: ["3", "4", "5", "6"], correct: 2 }
+        ],
+        activity: "Use an identification key to identify animals as vertebrates or invertebrates. Sort animals into the 5 vertebrate groups."
+      },
+      {
+        id: "1.5",
+        title: "1.5 Medicines and infectious diseases",
+        content: `
+          <h2 class="text-2xl font-bold mb-4" style="color: var(--primary);"> Medicines and infectious diseases</h2>
+          <h3 class="text-xl font-bold mt-4 mb-3">Medicines</h3>
+          <p class="mb-4">We take <strong>medicines</strong> to help make us better when we have an illness. Some medicines <strong>prevent</strong> us from getting ill.</p>
+          <h3 class="text-xl font-bold mt-4 mb-3">Taking medicines safely</h3>
+          <ul class="list-disc pl-6 space-y-2 mb-4">
+            <li>Only take medicines given by a doctor, nurse, or adult</li>
+            <li>Always follow the <strong>instructions</strong></li>
+            <li>Take the right amount - too much can be harmful</li>
+            <li>Never take someone else's medicine</li>
+          </ul>
+          <h3 class="text-xl font-bold mt-4 mb-3">Vaccinations</h3>
+          <p class="mb-4">Some injections can stop or prevent illnesses like measles or flu. These are called <strong>vaccinations</strong>.</p>
+          <h3 class="text-xl font-bold mt-4 mb-3">Infectious diseases</h3>
+          <p class="mb-4">An <strong>infectious disease</strong> is caused by tiny living things called <strong>germs</strong>. Germs <strong>infect</strong> your body and make you ill.</p>
+          <p class="mb-4">People, animals, AND plants can all get infectious diseases!</p>
+        `,
+        keywords: ["germs", "infect", "infectious disease", "instructions", "medicines", "prevent", "vaccinations"],
+        quiz: [
+          { q: "What causes infectious diseases?", options: ["Bones", "Germs", "Muscles", "Food"], correct: 1 },
+          { q: "What is a vaccination?", options: ["A type of food", "An injection that prevents disease", "A medicine for headaches", "A type of exercise"], correct: 1 },
+          { q: "Who should give you medicine?", options: ["A friend", "A doctor or adult", "Yourself", "Anyone"], correct: 1 }
+        ],
+        activity: "Research vaccinations: Who invented them? Which disease did the first vaccination prevent? How have they changed?"
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "2. Energy",
+    color: "#f59e0b",
+    icon: "⚡",
+    lessons: [
+      { id: "2.1", title: "2.1 Energy around us", content: "<h2 class='text-2xl font-bold mb-4'>⚡ Energy around us</h2><p class='mb-4'>Energy is in everything around us. We need energy for any movement or action to happen.</p><p class='mb-4'>Energy comes from food, the sun, fuel, and electricity.</p>", keywords: ["energy", "predict", "movement", "action"], quiz: [{ q: "Where do humans get energy from?", options: ["Rocks", "Food", "Water only", "Air"], correct: 1 }], activity: "List 5 things that use energy in your home." },
+      { id: "2.2", title: "2.2 Energy transfers", content: "<h2 class='text-2xl font-bold mb-4'>🔄 Energy transfers</h2><p class='mb-4'>Energy can move from one place to another. This is called energy transfer.</p>", keywords: ["transfer", "heat", "light", "sound"], quiz: [{ q: "What is energy transfer?", options: ["Energy disappearing", "Energy moving from one place to another", "Energy being created", "Energy staying still"], correct: 1 }], activity: "Draw a diagram showing how energy from the sun reaches you." },
+      { id: "2.3", title: "2.3 Energy changes", content: "<h2 class='text-2xl font-bold mb-4'> Energy changes</h2><p class='mb-4'>Energy can change from one form to another. For example, electrical energy can become light energy in a bulb.</p>", keywords: ["change", "electrical", "light", "heat", "sound"], quiz: [{ q: "What does a light bulb change electrical energy into?", options: ["Only heat", "Light and heat", "Only sound", "Nothing"], correct: 1 }], activity: "Identify energy changes in 5 everyday objects." },
+      { id: "2.4", title: "2.4 Energy and living things", content: "<h2 class='text-2xl font-bold mb-4'> Energy and living things</h2><p class='mb-4'>All living things need energy. Plants get energy from the sun. Animals get energy from food.</p>", keywords: ["photosynthesis", "food chain", "producer", "consumer"], quiz: [{ q: "Where do plants get their energy?", options: ["Soil", "Water", "Sun", "Air"], correct: 2 }], activity: "Create a food chain showing energy flow." }
+    ]
+  },
+  {
+    id: 3,
+    title: "3. Materials",
+    color: "#10b981",
+    icon: "🧪",
+    lessons: [
+      { id: "3.1", title: "3.1 Materials, substances and particles", content: "<h2 class='text-2xl font-bold mb-4'>🧪 Materials, substances and particles</h2><p class='mb-4'>Everything is made of materials. Materials are made of tiny particles too small to see.</p>", keywords: ["material", "substance", "particle", "property"], quiz: [{ q: "What are materials made of?", options: ["Big chunks", "Tiny particles", "Nothing", "Air only"], correct: 1 }], activity: "Collect 5 different materials and describe their properties." },
+      { id: "3.2", title: "3.2 How do solids and liquids behave?", content: "<h2 class='text-2xl font-bold mb-4'>💧 Solids and liquids</h2><p class='mb-4'>Solids keep their shape. Liquids flow and take the shape of their container.</p>", keywords: ["solid", "liquid", "shape", "flow", "volume"], quiz: [{ q: "What does a liquid do?", options: ["Keeps its shape", "Flows and takes container shape", "Floats always", "Disappears"], correct: 1 }], activity: "Test 5 materials - are they solid or liquid?" },
+      { id: "3.3", title: "3.3 Melting and solidifying", content: "<h2 class='text-2xl font-bold mb-4'>🔥 Melting and solidifying</h2><p class='mb-4'>When a solid is heated, it can melt into a liquid. When a liquid cools, it can solidify.</p>", keywords: ["melt", "solidify", "heat", "cool", "temperature"], quiz: [{ q: "What happens when ice is heated?", options: ["It gets harder", "It melts", "It disappears", "It turns to gas immediately"], correct: 1 }], activity: "Melt chocolate and let it solidify again. Record observations." },
+      { id: "3.4", title: "3.4 Chemical reactions", content: "<h2 class='text-2xl font-bold mb-4'>⚗️ Chemical reactions</h2><p class='mb-4'>A chemical reaction happens when substances change to make new substances. Signs include: bubbles, color change, temperature change.</p>", keywords: ["reaction", "change", "irreversible", "reversible", "mixture"], quiz: [{ q: "Which is a sign of a chemical reaction?", options: ["Nothing changes", "Bubbles form", "It stays the same", "It gets cold only"], correct: 1 }], activity: "Mix baking soda and vinegar. Observe the reaction." }
+    ]
+  },
+  {
+    id: 4,
+    title: "4. Earth and its habitats",
+    color: "#8b5cf6",
+    icon: "🌍",
+    lessons: [
+      { id: "4.1", title: "4.1 The structure of the Earth", content: "<h2 class='text-2xl font-bold mb-4'>🌍 Structure of the Earth</h2><p class='mb-4'>The Earth has layers: crust, mantle, outer core, inner core.</p>", keywords: ["crust", "mantle", "core", "layer", "rock"], quiz: [{ q: "What is the outermost layer of Earth?", options: ["Core", "Mantle", "Crust", "Center"], correct: 2 }], activity: "Make a model of Earth's layers using clay." },
+      { id: "4.2", title: "4.2 Volcanoes", content: "<h2 class='text-2xl font-bold mb-4'>🌋 Volcanoes</h2><p class='mb-4'>Volcanoes form when magma from inside the Earth erupts through the crust.</p>", keywords: ["volcano", "magma", "lava", "eruption", "crater"], quiz: [{ q: "What is magma called when it reaches the surface?", options: ["Rock", "Lava", "Water", "Smoke"], correct: 1 }], activity: "Create a volcano model with baking soda eruption." },
+      { id: "4.3", title: "4.3 Earthquakes", content: "<h2 class='text-2xl font-bold mb-4'> Earthquakes</h2><p class='mb-4'>Earthquakes happen when tectonic plates move and shake the ground.</p>", keywords: ["earthquake", "tectonic", "plate", "seismograph", "magnitude"], quiz: [{ q: "What causes earthquakes?", options: ["Wind", "Moving tectonic plates", "Rain", "Sun"], correct: 1 }], activity: "Build a structure and test it against simulated earthquake." },
+      { id: "4.4", title: "4.4 Different habitats", content: "<h2 class='text-2xl font-bold mb-4'>️ Different habitats</h2><p class='mb-4'>A habitat is where an animal or plant lives. Different habitats include forests, deserts, oceans, and grasslands.</p>", keywords: ["habitat", "environment", "adapt", "ecosystem", "biome"], quiz: [{ q: "What is a habitat?", options: ["A type of food", "Where an animal lives", "A kind of rock", "A weather pattern"], correct: 1 }], activity: "Research 3 different habitats and the animals that live there." }
+    ]
+  },
+  {
+    id: 5,
+    title: "5. Light",
+    color: "#ef4444",
+    icon: "",
+    lessons: [
+      { id: "5.1", title: "5.1 How we see things", content: "<h2 class='text-2xl font-bold mb-4'>️ How we see things</h2><p class='mb-4'>We see things because light enters our eyes. Light sources produce light. Other objects reflect light.</p>", keywords: ["light", "source", "reflect", "eye", "see"], quiz: [{ q: "How do we see objects?", options: ["They send sound", "Light enters our eyes", "We touch them", "They move"], correct: 1 }], activity: "List 5 light sources and 5 objects that reflect light." },
+      { id: "5.2", title: "5.2 Light travels in straight lines", content: "<h2 class='text-2xl font-bold mb-4'>📏 Light travels in straight lines</h2><p class='mb-4'>Light always travels in straight lines. This is why shadows form.</p>", keywords: ["straight", "line", "shadow", "beam", "ray"], quiz: [{ q: "How does light travel?", options: ["In curves", "In zigzags", "In straight lines", "In circles"], correct: 2 }], activity: "Use a flashlight and cards with holes to show light travels straight." },
+      { id: "5.3", title: "5.3 Light reflects off different surfaces", content: "<h2 class='text-2xl font-bold mb-4'>🪞 Light reflection</h2><p class='mb-4'>Shiny surfaces reflect light well. Dull surfaces don't reflect much light.</p>", keywords: ["reflect", "mirror", "shiny", "dull", "surface"], quiz: [{ q: "Which surface reflects light best?", options: ["Black paper", "Mirror", "Wood", "Cloth"], correct: 1 }], activity: "Test reflection on 5 different surfaces." },
+      { id: "5.4", title: "5.4 Light in the solar system", content: "<h2 class='text-2xl font-bold mb-4'>☀️ Light in the solar system</h2><p class='mb-4'>The Sun is a light source. Planets reflect sunlight. The Moon reflects sunlight too.</p>", keywords: ["sun", "planet", "moon", "solar", "orbit"], quiz: [{ q: "Where does the Moon get its light?", options: ["It makes its own", "From the Sun", "From Earth", "From stars"], correct: 1 }], activity: "Model the solar system showing light from the Sun." },
+      { id: "5.5", title: "5.5 Day and night", content: "<h2 class='text-2xl font-bold mb-4'>🌙 Day and night</h2><p class='mb-4'>Day and night happen because the Earth rotates. The side facing the Sun has day, the other side has night.</p>", keywords: ["rotate", "day", "night", "spin", "axis"], quiz: [{ q: "What causes day and night?", options: ["The Sun moves", "Earth rotates", "The Moon blocks Sun", "Clouds"], correct: 1 }], activity: "Use a globe and flashlight to demonstrate day and night." },
+      { id: "5.6", title: "5.6 Investigating shadow lengths", content: "<h2 class='text-2xl font-bold mb-4'> Shadow lengths</h2><p class='mb-4'>Shadows change length during the day. They are longest in the morning and evening, shortest at midday.</p>", keywords: ["shadow", "length", "midday", "morning", "evening"], quiz: [{ q: "When are shadows shortest?", options: ["Morning", "Midday", "Evening", "Night"], correct: 1 }], activity: "Measure shadow length every hour for a day. Graph the results." }
+    ]
+  },
+  {
+    id: 6,
+    title: "6. Electricity",
+    color: "#06b6d4",
+    icon: "🔌",
+    lessons: [
+      { id: "6.1", title: "6.1 Which materials conduct electricity?", content: "<h2 class='text-2xl font-bold mb-4'>⚡ Conductors</h2><p class='mb-4'>Conductors let electricity flow through them. Metals are good conductors.</p>", keywords: ["conductor", "metal", "electricity", "flow", "circuit"], quiz: [{ q: "Which is a good conductor?", options: ["Plastic", "Wood", "Metal", "Rubber"], correct: 2 }], activity: "Test 10 materials to see which conduct electricity." },
+      { id: "6.2", title: "6.2 Does water conduct electricity?", content: "<h2 class='text-2xl font-bold mb-4'> Water and electricity</h2><p class='mb-4'>Pure water doesn't conduct well, but water with salts/minerals does. Never mix water and electricity!</p>", keywords: ["water", "conduct", "salt", "pure", "danger"], quiz: [{ q: "Is it safe to use electricity near water?", options: ["Yes always", "No, it's dangerous", "Only in summer", "Only with adults"], correct: 1 }], activity: "Test conductivity of tap water vs salt water (with teacher)." },
+      { id: "6.3", title: "6.3 Using conductors and insulators", content: "<h2 class='text-2xl font-bold mb-4'>🔌 Conductors and insulators</h2><p class='mb-4'>Insulators stop electricity flowing. Wires have metal inside (conductor) and plastic outside (insulator).</p>", keywords: ["insulator", "plastic", "wire", "safe", "protect"], quiz: [{ q: "What is plastic used for in wires?", options: ["To conduct", "As an insulator", "To look pretty", "To make it heavy"], correct: 1 }], activity: "Identify conductors and insulators in household appliances." },
+      { id: "6.4", title: "6.4 Switches", content: "<h2 class='text-2xl font-bold mb-4'> Switches</h2><p class='mb-4'>Switches open and close circuits. When closed, electricity flows. When open, it stops.</p>", keywords: ["switch", "open", "close", "circuit", "control"], quiz: [{ q: "What does a closed switch do?", options: ["Stops electricity", "Lets electricity flow", "Breaks the circuit", "Makes heat"], correct: 1 }], activity: "Make a simple switch using paper clips and cardboard." },
+      { id: "6.5", title: "6.5 Changing the number of components in a circuit", content: "<h2 class='text-2xl font-bold mb-4'>🔋 Circuit components</h2><p class='mb-4'>Adding more batteries makes bulbs brighter. Adding more bulbs makes them dimmer.</p>", keywords: ["battery", "bulb", "bright", "dim", "component"], quiz: [{ q: "What happens when you add more batteries?", options: ["Bulb gets dimmer", "Bulb gets brighter", "Nothing", "Bulb breaks"], correct: 1 }], activity: "Build circuits with different numbers of batteries and bulbs." }
+    ]
+  }
+];
+
+// ============ STATE ============
+let state = {
+  currentUnit: 0,
+  currentLesson: 0,
+  currentTab: 'lesson',
+  completedLessons: [],
+  quizScores: {},
+  xp: 0,
+  level: 1,
+  theme: 'light',
+  role: 'student',
+  userName: 'Student',
+  achievements: [],
+  streak: 0,
+  lastActive: null,
+  quizAttempts: {}
+};
+
+// ============ INIT ============
+function init() {
+  loadState();
+  renderSyllabus();
+  renderLesson();
+  updateProgress();
+  updateXP();
+  setupThemeButtons();
+  setupTabs();
+  setupRoleSwitcher();
+}
+
+function loadState() {
+  const saved = localStorage.getItem('scienceHubState');
+  if (saved) {
+    state = { ...state, ...JSON.parse(saved) };
+    document.body.setAttribute('data-theme', state.theme);
+    document.getElementById('userName').textContent = state.userName;
+    document.getElementById('roleSwitcher').value = state.role;
+    updateThemeButtons();
+  }
+}
+
+function saveState() {
+  localStorage.setItem('scienceHubState', JSON.stringify(state));
+}
+
+// ============ SYLLABUS RENDERING ============
+function renderSyllabus() {
+  const list = document.getElementById('syllabusList');
+  list.innerHTML = '';
+  syllabus.forEach((unit, ui) => {
+    const unitDiv = document.createElement('div');
+    unitDiv.className = 'mb-2';
+    unitDiv.innerHTML = `
+      <div class="sidebar-item ${state.currentUnit === ui ? 'active' : ''}" onclick="selectUnit(${ui})" style="${state.currentUnit === ui ? `background: ${unit.color}` : ''}">
+        <span class="text-xl">${unit.icon}</span>
+        <div class="flex-1">
+          <div class="font-semibold text-sm">${unit.title}</div>
+          <div class="text-xs opacity-75">${unit.lessons.length} lessons</div>
+        </div>
+      </div>
+      <div class="ml-6 space-y-1 ${state.currentUnit === ui ? '' : 'hidden'}" id="unit-${ui}-lessons">
+        ${unit.lessons.map((lesson, li) => {
+          const isComplete = state.completedLessons.includes(`${unit.id}.${lesson.id}`);
+          const isActive = state.currentUnit === ui && state.currentLesson === li;
+          return `
+            <div class="sidebar-item text-sm ${isActive ? 'active' : ''}" onclick="selectLesson(${ui}, ${li})" style="${isActive ? `background: ${unit.color}` : ''}">
+              <span>${isComplete ? '✅' : '📄'}</span>
+              <span class="flex-1">${lesson.title}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    list.appendChild(unitDiv);
+  });
+  document.getElementById('totalLessons').textContent = syllabus.reduce((sum, u) => sum + u.lessons.length, 0);
+}
+
+function selectUnit(ui) {
+  state.currentUnit = ui;
+  state.currentLesson = 0;
+  renderSyllabus();
+  renderLesson();
+  saveState();
+}
+
+function selectLesson(ui, li) {
+  state.currentUnit = ui;
+  state.currentLesson = li;
+  state.currentTab = 'lesson';
+  renderSyllabus();
+  renderLesson();
+  updateTabButtons();
+  saveState();
+}
+
+function navigateLesson(dir) {
+  const unit = syllabus[state.currentUnit];
+  const newLesson = state.currentLesson + dir;
+  if (newLesson >= 0 && newLesson < unit.lessons.length) {
+    state.currentLesson = newLesson;
+  } else if (dir > 0 && state.currentUnit < syllabus.length - 1) {
+    state.currentUnit++;
+    state.currentLesson = 0;
+  } else if (dir < 0 && state.currentUnit > 0) {
+    state.currentUnit--;
+    state.currentLesson = syllabus[state.currentUnit].lessons.length - 1;
+  }
+  renderSyllabus();
+  renderLesson();
+  saveState();
+}
+
+// ============ LESSON RENDERING ============
+function renderLesson() {
+  const unit = syllabus[state.currentUnit];
+  const lesson = unit.lessons[state.currentLesson];
+  const content = document.getElementById('mainContent');
+
+  if (state.currentTab === 'lesson') {
+    content.innerHTML = lesson.content;
+  } else if (state.currentTab === 'keywords') {
+    content.innerHTML = `
+      <h2 class="text-2xl font-bold mb-4" style="color: var(--primary);">🔑 Keywords: ${lesson.title}</h2>
+      <p class="mb-4" style="color: var(--text-light);">Master these keywords to understand this lesson better. Click each to hear pronunciation (simulated).</p>
+      <div class="flex flex-wrap gap-2 mb-6">
+        ${lesson.keywords.map(kw => `
+          <button class="keyword-tag hover:scale-110 transition-transform" onclick="speakKeyword('${kw}')">
+            🔊 ${kw}
+          </button>
+        `).join('')}
+      </div>
+      <div class="card p-4 mt-4">
+        <h3 class="font-bold mb-2">📝 Practice</h3>
+        <p class="text-sm mb-3">Write each keyword in a sentence:</p>
+        <div class="space-y-2">
+          ${lesson.keywords.map((kw, i) => `
+            <div class="flex gap-2 items-center">
+              <span class="font-semibold text-sm w-32" style="color: var(--primary);">${kw}:</span>
+              <input type="text" class="flex-1 px-3 py-2 rounded border-2 text-sm" style="border-color: var(--border); background: var(--bg); color: var(--text);" placeholder="Write a sentence with '${kw}'..." id="kw-${i}">
+            </div>
+          `).join('')}
+        </div>
+        <button class="btn-primary mt-4" onclick="saveKeywords()">💾 Save my sentences</button>
+      </div>
+    `;
+  } else if (state.currentTab === 'quiz') {
+    renderQuiz(lesson);
+  } else if (state.currentTab === 'activity') {
+    content.innerHTML = `
+      <h2 class="text-2xl font-bold mb-4" style="color: var(--primary);">🧪 Activity: ${lesson.title}</h2>
+      <div class="card p-6 bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-dashed" style="border-color: var(--primary);">
+        <div class="text-4xl mb-3">🔬</div>
+        <h3 class="font-bold text-lg mb-3">Instructions</h3>
+        <p class="mb-4">${lesson.activity}</p>
+        <div class="bg-white p-4 rounded-lg">
+          <h4 class="font-bold mb-2">📋 My observations:</h4>
+          <textarea class="w-full p-3 border-2 rounded min-h-[120px]" style="border-color: var(--border); background: var(--bg); color: var(--text);" placeholder="Write what you observed..." id="activityNotes"></textarea>
+        </div>
+        <button class="btn-primary mt-4" onclick="saveActivity()">💾 Save observations</button>
+      </div>
+    `;
+  }
+
+  // Update nav buttons
+  document.getElementById('prevBtn').disabled = (state.currentUnit === 0 && state.currentLesson === 0);
+  const isLastLesson = state.currentUnit === syllabus.length - 1 && state.currentLesson === syllabus[syllabus.length-1].lessons.length - 1;
+  document.getElementById('nextBtn').disabled = isLastLesson;
+
+  const lessonId = `${unit.id}.${lesson.id}`;
+  const isComplete = state.completedLessons.includes(lessonId);
+  document.getElementById('markCompleteBtn').textContent = isComplete ? '✅ Completed' : '✓ Mark Complete';
+  document.getElementById('markCompleteBtn').disabled = isComplete;
+}
+
+// ============ QUIZ ============
+function renderQuiz(lesson) {
+  const content = document.getElementById('mainContent');
+  const lessonId = `${syllabus[state.currentUnit].id}.${lesson.id}`;
+  const attempts = state.quizAttempts[lessonId] || 0;
+  const bestScore = state.quizScores[lessonId] || 0;
+
+  content.innerHTML = `
+    <h2 class="text-2xl font-bold mb-2" style="color: var(--primary);"> Quiz: ${lesson.title}</h2>
+    <div class="flex gap-4 mb-4 flex-wrap">
+      <span class="badge" style="background: var(--primary); color: white;">Attempts: ${attempts}</span>
+      <span class="badge" style="background: var(--accent); color: white;">Best: ${bestScore}/${lesson.quiz.length}</span>
+    </div>
+    <div id="quizContainer">
+      ${lesson.quiz.map((q, qi) => `
+        <div class="card p-4 mb-4" id="quiz-q-${qi}">
+          <p class="font-bold mb-3">${qi + 1}. ${q.q}</p>
+          <div class="space-y-2">
+            ${q.options.map((opt, oi) => `
+              <div class="quiz-option" onclick="selectAnswer(${qi}, ${oi})" id="q${qi}-o${oi}">
+                ${String.fromCharCode(65 + oi)}. ${opt}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+      <button class="btn-primary w-full py-3 text-lg" onclick="submitQuiz()">📊 Submit Answers</button>
+    </div>
+  `;
+}
+
+let selectedAnswers = {};
+
+function selectAnswer(qi, oi) {
+  selectedAnswers[qi] = oi;
+  const lesson = syllabus[state.currentUnit].lessons[state.currentLesson];
+  lesson.quiz[qi].options.forEach((_, i) => {
+    document.getElementById(`q${qi}-o${i}`).classList.remove('selected');
+  });
+  document.getElementById(`q${qi}-o${oi}`).classList.add('selected');
+}
+
+function submitQuiz() {
+  const lesson = syllabus[state.currentUnit].lessons[state.currentLesson];
+  const lessonId = `${syllabus[state.currentUnit].id}.${lesson.id}`;
+  let correct = 0;
+
+  lesson.quiz.forEach((q, qi) => {
+    const selected = selectedAnswers[qi];
+    if (selected === undefined) {
+      alert(`Please answer question ${qi + 1}`);
+      return;
+    }
+    const el = document.getElementById(`q${qi}-o${selected}`);
+    if (selected === q.correct) {
+      el.classList.add('correct');
+      correct++;
+    } else {
+      el.classList.add('wrong');
+      document.getElementById(`q${qi}-o${q.correct}`).classList.add('correct');
+    }
+    // Disable all options
+    q.options.forEach((_, oi) => {
+      document.getElementById(`q${qi}-o${oi}`).style.pointerEvents = 'none';
+    });
+  });
+
+  const attempts = (state.quizAttempts[lessonId] || 0) + 1;
+  state.quizAttempts[lessonId] = attempts;
+  const prevBest = state.quizScores[lessonId] || 0;
+  if (correct > prevBest) {
+    state.quizScores[lessonId] = correct;
+  }
+
+  const xpEarned = correct * 10;
+  addXP(xpEarned);
+
+  setTimeout(() => {
+    showAchievement(
+      correct === lesson.quiz.length ? '🏆' : correct >= lesson.quiz.length / 2 ? '⭐' : '📚',
+      correct === lesson.quiz.length ? 'Perfect Score!' : correct >= lesson.quiz.length / 2 ? 'Good Job!' : 'Keep Trying!',
+      `You got ${correct}/${lesson.quiz.length} correct! +${xpEarned} XP`,
+      `+${xpEarned} XP`
+    );
+  }, 1000);
+
+  saveState();
+  updateProgress();
+}
+
+// ============ TABS ============
+function setupTabs() {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.currentTab = btn.dataset.tab;
+      updateTabButtons();
+      renderLesson();
+      saveState();
+    });
+  });
+}
+
+function updateTabButtons() {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === state.currentTab);
+  });
+}
+
+// ============ THEME ============
+function setupThemeButtons() {
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const theme = btn.dataset.themeSet;
+      state.theme = theme;
+      document.body.setAttribute('data-theme', theme);
+      updateThemeButtons();
+      saveState();
+    });
+  });
+}
+
+function updateThemeButtons() {
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.themeSet === state.theme);
+  });
+}
+
+// ============ ROLE ============
+function setupRoleSwitcher() {
+  document.getElementById('roleSwitcher').addEventListener('change', (e) => {
+    state.role = e.target.value;
+    saveState();
+    if (state.role !== 'student') {
+      showReport();
+    }
+  });
+}
+
+// ============ PROGRESS ============
+function markLessonComplete() {
+  const unit = syllabus[state.currentUnit];
+  const lesson = unit.lessons[state.currentLesson];
+  const lessonId = `${unit.id}.${lesson.id}`;
+
+  if (!state.completedLessons.includes(lessonId)) {
+    state.completedLessons.push(lessonId);
+    addXP(25);
+    showAchievement('✅', 'Lesson Complete!', `You finished ${lesson.title}`, '+25 XP');
+    updateProgress();
+    renderSyllabus();
+    renderLesson();
+    saveState();
+  }
+}
+
+function addXP(amount) {
+  state.xp += amount;
+  const newLevel = Math.floor(state.xp / 100) + 1;
+  if (newLevel > state.level) {
+    state.level = newLevel;
+    setTimeout(() => {
+      showAchievement('🎉', 'Level Up!', `You reached Level ${newLevel}!`, `Level ${newLevel}`);
+    }, 1500);
+  }
+  updateXP();
+  saveState();
+}
+
+function updateXP() {
+  document.getElementById('userXP').textContent = state.xp;
+  document.getElementById('userLevel').textContent = `Level ${state.level}`;
+  const xpInLevel = state.xp % 100;
+  document.getElementById('xpBar').style.width = `${xpInLevel}%`;
+}
+
+function updateProgress() {
+  const total = syllabus.reduce((sum, u) => sum + u.lessons.length, 0);
+  const completed = state.completedLessons.length;
+  const pct = (completed / total) * 100;
+  document.getElementById('totalProgress').style.width = `${pct}%`;
+  document.getElementById('completedLessons').textContent = completed;
+}
+
+// ============ ACHIEVEMENTS ============
+function showAchievement(icon, title, desc, xp) {
+  document.getElementById('achievementIcon').textContent = icon;
+  document.getElementById('achievementTitle').textContent = title;
+  document.getElementById('achievementDesc').textContent = desc;
+  document.getElementById('achievementXP').textContent = xp;
+  document.getElementById('achievementModal').classList.add('active');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// ============ REPORT ============
+function showReport() {
+  const role = state.role;
+  const total = syllabus.reduce((sum, u) => sum + u.lessons.length, 0);
+  const completed = state.completedLessons.length;
+  const pct = Math.round((completed / total) * 100);
+
+  let html = '';
+
+  if (role === 'student') {
+    // Student motivation report
+    const stars = Math.floor(pct / 20);
+    html = `
+      <div class="report-card">
+        <div class="text-center mb-6">
+          <div class="text-6xl mb-3">${pct >= 80 ? '🌟' : pct >= 50 ? '⭐' : ''}</div>
+          <h3 class="text-2xl font-bold" style="color: var(--primary);">${state.userName}'s Progress</h3>
+          <div class="text-5xl font-bold my-3" style="color: var(--accent);">${pct}%</div>
+          <div class="flex justify-center gap-1 my-3">
+            ${[1,2,3,4,5].map(i => `<span class="star">${i <= stars ? '★' : '☆'}</span>`).join('')}
+          </div>
+          <p class="text-lg font-semibold">${getMotivationalMessage(pct)}</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+          <div class="card p-4 text-center">
+            <div class="text-3xl font-bold" style="color: var(--primary);">${completed}</div>
+            <div class="text-sm" style="color: var(--text-light);">Lessons Done</div>
+          </div>
+          <div class="card p-4 text-center">
+            <div class="text-3xl font-bold" style="color: var(--accent);">${state.xp}</div>
+            <div class="text-sm" style="color: var(--text-light);">Total XP</div>
+          </div>
+          <div class="card p-4 text-center">
+            <div class="text-3xl font-bold" style="color: var(--success);">Level ${state.level}</div>
+            <div class="text-sm" style="color: var(--text-light);">Current Level</div>
+          </div>
+        </div>
+
+        <h4 class="font-bold mb-3">🏆 Achievements</h4>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          ${getAchievements().map(a => `
+            <div class="card p-3 text-center ${a.unlocked ? 'border-2' : 'opacity-40'}" style="${a.unlocked ? `border-color: ${a.color}` : ''}">
+              <div class="text-3xl">${a.icon}</div>
+              <div class="text-xs font-semibold mt-1">${a.name}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <h4 class="font-bold mb-3">📊 Unit Progress</h4>
+        <div class="space-y-3">
+          ${syllabus.map(unit => {
+            const unitCompleted = state.completedLessons.filter(id => id.startsWith(unit.id + '.')).length;
+            const unitTotal = unit.lessons.length;
+            const unitPct = Math.round((unitCompleted / unitTotal) * 100);
+            return `
+              <div>
+                <div class="flex justify-between text-sm mb-1">
+                  <span class="font-semibold">${unit.icon} ${unit.title}</span>
+                  <span>${unitCompleted}/${unitTotal} (${unitPct}%)</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${unitPct}%; background: ${unit.color};"></div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  } else if (role === 'teacher') {
+    // Teacher evaluation report
+    html = `
+      <div class="report-card">
+        <h3 class="text-2xl font-bold mb-4" style="color: var(--primary);">👩‍🏫 Teacher Dashboard</h3>
+        <div class="grid md:grid-cols-4 gap-4 mb-6">
+          <div class="card p-4 text-center">
+            <div class="text-3xl font-bold" style="color: var(--primary);">${completed}</div>
+            <div class="text-sm">Lessons Completed</div>
+          </div>
+          <div class="card p-4 text-center">
+            <div class="text-3xl font-bold" style="color: var(--accent);">${Object.keys(state.quizScores).length}</div>
+            <div class="text-sm">Quizzes Taken</div>
+          </div>
+          <div class="card p-4 text-center">
+            <div class="text-3xl font-bold" style="color: var(--success);">${getAverageQuizScore()}%</div>
+            <div class="text-sm">Avg Quiz Score</div>
+          </div>
+          <div class="card p-4 text-center">
+            <div class="text-3xl font-bold" style="color: var(--danger);">${total - completed}</div>
+            <div class="text-sm">Lessons Remaining</div>
+          </div>
+        </div>
+
+        <h4 class="font-bold mb-3">📈 Completion by Unit</h4>
+        <div style="height: 300px;">
+          <canvas id="teacherChart"></canvas>
+        </div>
+
+        <h4 class="font-bold mt-6 mb-3">📋 Detailed Progress</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr style="background: var(--primary); color: white;">
+                <th class="p-2 text-left">Lesson</th>
+                <th class="p-2">Status</th>
+                <th class="p-2">Quiz Best</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${syllabus.flatMap(unit => unit.lessons.map(lesson => {
+                const lid = `${unit.id}.${lesson.id}`;
+                const done = state.completedLessons.includes(lid);
+                const score = state.quizScores[lid];
+                return `
+                  <tr class="border-b" style="border-color: var(--border);">
+                    <td class="p-2">${lesson.title}</td>
+                    <td class="p-2 text-center">${done ? '✅' : '⬜'}</td>
+                    <td class="p-2 text-center">${score !== undefined ? `${score}/${lesson.quiz.length}` : '-'}</td>
+                  </tr>
+                `;
+              })).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  } else if (role === 'parent') {
+    // Parent evaluation report
+    html = `
+      <div class="report-card">
+        <h3 class="text-2xl font-bold mb-4" style="color: var(--primary);">👨‍👩‍👧 Parent Report for ${state.userName}</h3>
+        <div class="bg-green-50 p-4 rounded-lg mb-4 border-l-4 border-green-500">
+          <h4 class="font-bold text-green-700">Overall Progress: ${pct}%</h4>
+          <p class="text-sm mt-1">${getProgressSummary(pct)}</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-6">
+          <div class="card p-4">
+            <h4 class="font-bold mb-2">💪 Strengths</h4>
+            <ul class="text-sm space-y-1">
+              ${getStrengths().map(s => `<li>✅ ${s}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="card p-4">
+            <h4 class="font-bold mb-2">📈 Areas for Improvement</h4>
+            <ul class="text-sm space-y-1">
+              ${getImprovements().map(s => `<li>🎯 ${s}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+
+        <h4 class="font-bold mb-3">📊 Subject Breakdown</h4>
+        <div style="height: 300px;">
+          <canvas id="parentChart"></canvas>
+        </div>
+
+        <div class="mt-6 p-4 rounded-lg" style="background: var(--bg); border: 2px solid var(--primary);">
+          <h4 class="font-bold mb-2">💬 Teacher's Note</h4>
+          <p class="text-sm">${getTeacherNote(pct)}</p>
+        </div>
+
+        <div class="mt-4 grid md:grid-cols-3 gap-3">
+          <div class="card p-3 text-center">
+            <div class="text-2xl">⏱️</div>
+            <div class="text-xs">Study Time</div>
+            <div class="font-bold">${Math.round(state.xp / 10)} min</div>
+          </div>
+          <div class="card p-3 text-center">
+            <div class="text-2xl">🎯</div>
+            <div class="text-xs">Quiz Accuracy</div>
+            <div class="font-bold">${getAverageQuizScore()}%</div>
+          </div>
+          <div class="card p-3 text-center">
+            <div class="text-2xl"></div>
+            <div class="text-xs">Streak</div>
+            <div class="font-bold">${state.streak} days</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById('reportTitle').textContent = role === 'student' ? '📊 My Progress Report' : role === 'teacher' ? '👩‍ Teacher Dashboard' : '👨👩‍👧 Parent Report';
+  document.getElementById('reportContent').innerHTML = html;
+  document.getElementById('reportModal').classList.add('active');
+
+  // Render charts after modal is visible
+  setTimeout(() => {
+    if (role === 'teacher') renderTeacherChart();
+    if (role === 'parent') renderParentChart();
+  }, 100);
+}
+
+function renderTeacherChart() {
+  const ctx = document.getElementById('teacherChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: syllabus.map(u => u.title),
+      datasets: [{
+        label: 'Completion %',
+        data: syllabus.map(unit => {
+          const done = state.completedLessons.filter(id => id.startsWith(unit.id + '.')).length;
+          return Math.round((done / unit.lessons.length) * 100);
+        }),
+        backgroundColor: syllabus.map(u => u.color)
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+  });
+}
+
+function renderParentChart() {
+  const ctx = document.getElementById('parentChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: syllabus.map(u => u.title.replace(/\d+\.\d+\s*/, '')),
+      datasets: [{
+        label: 'Progress',
+        data: syllabus.map(unit => {
+          const done = state.completedLessons.filter(id => id.startsWith(unit.id + '.')).length;
+          return Math.round((done / unit.lessons.length) * 100);
+        }),
+        backgroundColor: 'rgba(8, 145, 178, 0.2)',
+        borderColor: '#0891b2',
+        borderWidth: 2
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { r: { beginAtZero: true, max: 100 } } }
+  });
+}
+
+function getMotivationalMessage(pct) {
+  if (pct === 100) return "🌟 Amazing! You're a Science Superstar!";
+  if (pct >= 80) return "🎉 Excellent work! Keep it up!";
+  if (pct >= 60) return "👍 Great progress! You're doing well!";
+  if (pct >= 40) return "💪 Good effort! Keep going!";
+  if (pct >= 20) return "📚 Nice start! Every lesson counts!";
+  return " Let's begin this science journey!";
+}
+
+function getProgressSummary(pct) {
+  if (pct >= 80) return `${state.userName} is doing excellent work and shows strong understanding of the material.`;
+  if (pct >= 50) return `${state.userName} is making good progress. With continued effort, they will master all topics.`;
+  if (pct >= 20) return `${state.userName} has started their learning journey. Regular practice will help them improve.`;
+  return `${state.userName} is at the beginning of their learning. Encouragement and support will help them engage more.`;
+}
+
+function getStrengths() {
+  const strengths = [];
+  syllabus.forEach(unit => {
+    const done = state.completedLessons.filter(id => id.startsWith(unit.id + '.')).length;
+    if (done === unit.lessons.length) strengths.push(`Completed all ${unit.title} lessons`);
+  });
+  const quizKeys = Object.keys(state.quizScores);
+  if (quizKeys.length > 0) {
+    const avg = getAverageQuizScore();
+    if (avg >= 80) strengths.push('Excellent quiz performance');
+    if (avg >= 60) strengths.push('Good quiz understanding');
+  }
+  if (state.xp >= 200) strengths.push('High engagement (XP earned)');
+  if (strengths.length === 0) strengths.push('Enthusiasm to learn', 'Willingness to try');
+  return strengths;
+}
+
+function getImprovements() {
+  const improvements = [];
+  syllabus.forEach(unit => {
+    const done = state.completedLessons.filter(id => id.startsWith(unit.id + '.')).length;
+    if (done < unit.lessons.length) improvements.push(`Complete remaining ${unit.title} lessons`);
+  });
+  const quizKeys = Object.keys(state.quizScores);
+  if (quizKeys.length > 0) {
+    const avg = getAverageQuizScore();
+    if (avg < 70) improvements.push('Review quiz topics for better understanding');
+  }
+  if (improvements.length === 0) improvements.push('Challenge with advanced topics', 'Help peers learn'];
+  return improvements;
+}
+
+function getTeacherNote(pct) {
+  if (pct >= 80) return `${state.userName} demonstrates excellent understanding and consistent effort. They are ready for more challenging material.`;
+  if (pct >= 50) return `${state.userName} is progressing well. Encourage them to complete remaining lessons and review quiz topics.`;
+  if (pct >= 20) return `${state.userName} has started engaging with the material. Provide additional support and encouragement.`;
+  return `${state.userName} needs more engagement. Consider interactive activities and positive reinforcement.`;
+}
+
+function getAverageQuizScore() {
+  const keys = Object.keys(state.quizScores);
+  if (keys.length === 0) return 0;
+  let total = 0;
+  keys.forEach(k => {
+    const unitId = k.split('.')[0];
+    const lessonId = k.split('.')[1];
+    const unit = syllabus.find(u => u.id == unitId);
+    if (unit) {
+      const lesson = unit.lessons.find(l => l.id === lessonId);
+      if (lesson) total += (state.quizScores[k] / lesson.quiz.length) * 100;
+    }
+  });
+  return Math.round(total / keys.length);
+}
+
+function getAchievements() {
+  return [
+    { icon: '🌱', name: 'First Step', unlocked: state.completedLessons.length >= 1, color: '#10b981' },
+    { icon: '📚', name: 'Bookworm', unlocked: state.completedLessons.length >= 5, color: '#3b82f6' },
+    { icon: '', name: 'Champion', unlocked: state.completedLessons.length >= 10, color: '#f59e0b' },
+    { icon: '🌟', name: 'Star Student', unlocked: state.completedLessons.length >= 20, color: '#ef4444' },
+    { icon: '', name: 'Quiz Master', unlocked: Object.keys(state.quizScores).length >= 5, color: '#8b5cf6' },
+    { icon: '💯', name: 'Perfect Score', unlocked: Object.values(state.quizScores).some((s, i) => {
+      const lid = Object.keys(state.quizScores)[i];
+      const unit = syllabus.find(u => u.id == lid.split('.')[0]);
+      if (!unit) return false;
+      const lesson = unit.lessons.find(l => l.id === lid.split('.')[1]);
+      return lesson && s === lesson.quiz.length;
+    }), color: '#ec4899' },
+    { icon: '⚡', name: 'Level 5', unlocked: state.level >= 5, color: '#06b6d4' },
+    { icon: '', name: 'On Fire', unlocked: state.xp >= 500, color: '#f97316' }
+  ];
+}
+
+// ============ UTILITIES ============
+function speakKeyword(kw) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(kw);
+    utterance.rate = 0.8;
+    speechSynthesis.speak(utterance);
+  }
+}
+
+function saveKeywords() {
+  const unit = syllabus[state.currentUnit];
+  const lesson = unit.lessons[state.currentLesson];
+  const sentences = lesson.keywords.map((_, i) => document.getElementById(`kw-${i}`).value).filter(v => v);
+  if (sentences.length > 0) {
+    addXP(10);
+    showAchievement('', 'Keywords Saved!', `You wrote ${sentences.length} sentences`, '+10 XP');
+  }
+}
+
+function saveActivity() {
+  const notes = document.getElementById('activityNotes').value;
+  if (notes.trim()) {
+    addXP(15);
+    showAchievement('🧪', 'Activity Saved!', 'Your observations are recorded', '+15 XP');
+  }
+}
+
+function resetProgress() {
+  if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+    state.completedLessons = [];
+    state.quizScores = {};
+    state.quizAttempts = {};
+    state.xp = 0;
+    state.level = 1;
+    state.achievements = [];
+    updateProgress();
+    updateXP();
+    renderSyllabus();
+    renderLesson();
+    saveState();
+  }
+}
+
+function printReport() {
+  window.print();
+}
+
+// ============ START ============
+init();
+</script>
+</body>
+</html>
